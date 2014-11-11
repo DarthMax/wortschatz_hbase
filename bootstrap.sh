@@ -1,8 +1,16 @@
 #!/usr/bin/env bash
+set -e
+
+export http_proxy="http://proxy.moez.fraunhofer.de:80"
+export https_proxy="http://proxy.moez.fraunhofer.de:80"
+
+sudo echo "Acquire::http::proxy \"http://proxy.moez.fraunhofer.de:80\";" >> /etc/apt/apt.conf.d/80proxy
+sudo echo "Acquire::ftp::proxy \"http://proxy.moez.fraunhofer.de:80\";" >> /etc/apt/apt.conf.d/80proxy
+sudo echo "Acquire::https::proxy \"http://proxy.moez.fraunhofer.de:80\";" >> /etc/apt/apt.conf.d/80proxy
 
 sudo apt-get update
 sudo apt-get install python-software-properties software-properties-common --yes
-sudo add-apt-repository ppa:webupd8team/java --yes
+sudo -E add-apt-repository ppa:webupd8team/java --yes
 sudo apt-get update
 
 
@@ -12,9 +20,9 @@ sudo apt-get install wget oracle-java7-installer --yes
 
 export JAVA_HOME=/usr/lib/jvm/java-7-oracle/
 
-wget http://ftp-stud.hs-esslingen.de/pub/Mirrors/ftp.apache.org/dist/hbase/stable/hbase-0.98.7-hadoop2-bin.tar.gz -o 
+wget http://ftp-stud.hs-esslingen.de/pub/Mirrors/ftp.apache.org/dist/hbase/stable/hbase-0.98.7-hadoop2-bin.tar.gz -O /tmp/hbase.tar.gz
 
-mkdir /tmp/hbase
+mkdir -p /tmp/hbase
 tar -xvf /tmp/hbase.tar.gz -C /tmp/hbase --strip-components=1
 
 sudo mkdir /usr/lib/hbase
@@ -26,10 +34,10 @@ echo "export PATH=$PATH:$HBASE_HOME/bin" >> ~/.bashrc
 export HBASE_HOME=/usr/lib/hbase/hbase-0.98.7
 export PATH=$PATH:$HBASE_HOME/bin
 
-mkdir /vagrant/hbase
-mkdir /vagrant/zookeeper
+mkdir -p /vagrant/hbase
+mkdir -p /vagrant/zookeeper
 
-sudo cat <<HBASECONFIG >> /usr/lib/hbase/hbase-0.98.7/conf/hbase-site.xml 
+sudo cat <<HBASECONFIG > /usr/lib/hbase/hbase-0.98.7/conf/hbase-site.xml 
 <configuration>
   <property>
     <name>hbase.rootdir</name>
@@ -43,3 +51,4 @@ sudo cat <<HBASECONFIG >> /usr/lib/hbase/hbase-0.98.7/conf/hbase-site.xml
 HBASECONFIG
 
 start-hbase.sh
+ 
