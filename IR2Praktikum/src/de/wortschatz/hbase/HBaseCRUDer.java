@@ -5,6 +5,7 @@ import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
+import java.io.InterruptedIOException;
 
 /**
  * Created by Marcel Kisilowski on 22.01.15.
@@ -14,40 +15,46 @@ public class HBaseCRUDer {
     private Configuration conf;
     public HBaseCRUDer(Configuration conf){
         this.conf=conf;
+        table = null;
     }
 
-    public Put createPut(String tableName,String rowName,String columnFamily, String qualifier,String value){
+    public Put createPut(String rowName,String columnFamily, String qualifier,String value){
         AdvancedPut put = null;
         boolean ret = false;
-        try {
-            updateTable(tableName);
-            put = new AdvancedPut(Bytes.toBytes(rowName));
-            put.add(columnFamily,qualifier,value);
-            table.put(put);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        put = new AdvancedPut(Bytes.toBytes(rowName));
+        put.add(columnFamily,qualifier,value);
         return put;
     }
-    public void updateTable(String tableName) throws IOException {
+
+    public void updateTable(Put put) {
+        try {
+            table.put(put);
+        } catch (InterruptedIOException e) {
+            e.printStackTrace();
+        } catch (RetriesExhaustedWithDetailsException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void setTable(String tableName) throws IOException {
         if(table != null && !table.getTableDescriptor().getNameAsString().equals(tableName)) {
             table = new HTable(conf,tableName);
         }
 
     }
 
-    public ResultScanner scanCooccurrences(String tableName,String startRow,String stopRow, long maxResultSet){
+    public Scan getScan(String startRow,String stopRow, long maxResultSet){
+        Scan scan = new Scan(Bytes.toBytes(startRow),Bytes.toBytes(stopRow));
+        scan.setMaxResultSize(maxResultSet);
+        return scan;
+    }
+    public ResultScanner scanTable(Scan scan) {
         ResultScanner result = null;
         try {
-            updateTable(tableName);
-            Scan scan = new Scan(Bytes.toBytes(startRow),Bytes.toBytes(stopRow));
-            scan.setMaxResultSize(maxResultSet);
             result = table.getScanner(scan);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
         return result;
     }
-
 }
