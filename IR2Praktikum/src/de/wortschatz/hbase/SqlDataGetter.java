@@ -1,15 +1,8 @@
 package de.wortschatz.hbase;
 
 
-
-
-
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Properties;
 
 
 /**
@@ -27,77 +20,6 @@ public class SqlDataGetter {
         this.con = con;
     }
 
-    protected get
-
-
-
-
-
-
-
-    /**
-     *
-     */
-    private String database = "jdbc:mysql://localhost/test";
-    private String dbuser = "test";
-    private String dbpassword = "test";
-    private String dbClass = "com.mysql.jdbc.Driver";
-
-    /**
-     * getter
-     * @return
-     */
-    public String getDatabase() {
-        return database;
-    }
-    public String getDbpassword() {
-        return dbpassword;
-    }
-    public String getDbuser() {
-        return dbuser;
-    }
-    public String getDbClass() {
-        return dbClass;
-    }
-
-
-
-    /**
-     * CONSTUCTOR is loading config file
-     */
-    public SqlDataGetter() {
-        // Load DB config from file
-        Properties prop = new Properties();
-        InputStream input = null;
-        try {
-            input = new FileInputStream("conf/config.properties");
-            // load a properties file
-            prop.load(input);
-            // get the property value and print it out
-            database = prop.getProperty("database");
-            dbuser = prop.getProperty("dbuser");
-            dbpassword = prop.getProperty("dbpassword");
-            dbClass = prop.getProperty("dbClass");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            if (input != null) {
-                try {
-                    input.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        con = null;
-    }
-
-    /**
-     * @return
-     */
-    String sayHello() {
-        return "hello";
-    }
 
 
     public ArrayList<String> getDataFromQuery(String query) {
@@ -121,15 +43,11 @@ public class SqlDataGetter {
             {
                 String oneRow = "";
                 for (int oneColumn=1;oneColumn<=nrOfColumns;oneColumn++) {
-                    if (oneColum != 1) oneRow += separator;
+                    if (oneColumn != 1) oneRow += separator;
                     oneRow += resultSet.getString(oneColumn);
                 }
                 resultList.add(oneRow);
             }
-        }
-        catch (ClassNotFoundException e)
-        {
-            e.printStackTrace();
         }
         catch (SQLException e)
         {
