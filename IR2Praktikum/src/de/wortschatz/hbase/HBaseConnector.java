@@ -1,7 +1,9 @@
 package de.wortschatz.hbase;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
-/**
- * Created by max on 22.01.15.
- */
-public class HBaseConnector {
+
+public class HBaseConnector{
+
 }
