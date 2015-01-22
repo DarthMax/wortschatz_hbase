@@ -1,0 +1,6 @@
+dbClass = com.mysql.jdbc.Driver
+dbHost = localhost
+dbPort = 3306
+dbName = test
+dbUser = user
+dbPassword = passwd
