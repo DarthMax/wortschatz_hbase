@@ -34,9 +34,9 @@ public class SqlConnector{
         String dbClass      = "com.mysql.jdbc.Driver";
         String dbHost       = "localhost";
         String dbPort       = "3306";
-        String dbName       = "test";
-        String dbUser       = "user";
-        String dbPassword   = "passwd";
+        String dbName       = "ir2";
+        String dbUser       = "root";
+        String dbPassword   = "";
 
         try {
             Properties prop = connectionPropoerties();
@@ -50,6 +50,7 @@ public class SqlConnector{
 
         }catch (IOException e) {
             System.out.println("Could not read DB-Configuration. Using default");
+            e.printStackTrace();
         }
 
         Class.forName(dbClass);
@@ -70,6 +71,7 @@ public class SqlConnector{
     private Properties connectionPropoerties() throws IOException {
         Properties prop = new Properties();
         InputStream input = null;
+
         input = new FileInputStream("conf/sql_database.properties");
         prop.load(input);
         input.close();

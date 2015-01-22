@@ -6,6 +6,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.util.List;
 
 /**
  * Created by Marcel Kisilowski on 22.01.15.
@@ -35,10 +36,24 @@ public class HBaseCRUDer {
             e.printStackTrace();
         }
     }
+    public void updateTable(List<Put> put) {
+        try {
+            table.put(put);
+        } catch (InterruptedIOException e) {
+            e.printStackTrace();
+        } catch (RetriesExhaustedWithDetailsException e) {
+            e.printStackTrace();
+        }
+    }
 
-    public void setTable(String tableName) throws IOException {
-        if(table != null && !table.getTableDescriptor().getNameAsString().equals(tableName)) {
+    public void setTable(String tableName) {
+        try {
+            if(table != null && !table.getTableDescriptor().getNameAsString().equals(tableName)) {
+                table = new HTable(conf,tableName);
+            }
             table = new HTable(conf,tableName);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
