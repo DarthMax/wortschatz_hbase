@@ -53,7 +53,8 @@ public class SqlConnector{
         }
 
         Class.forName(dbClass);
-        this.conn = DriverManager.getConnection("jdbc:mysql://"+dbHost+":"+ dbPort+"/"+dbName+"?"+"user="+dbUser+"&"+"password="+dbPassword);
+        this.conn = DriverManager.getConnection("jdbc:mysql://"+dbHost+"/test", dbUser, dbPassword);
+        //this.conn = DriverManager.getConnection("jdbc:mysql://"+dbHost+":"+ dbPort+"/"+dbName+"?"+"user="+dbUser+"&"+"password="+dbPassword);
     }
 
     public void finalize() {

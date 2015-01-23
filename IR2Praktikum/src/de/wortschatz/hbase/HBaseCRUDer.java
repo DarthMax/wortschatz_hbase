@@ -27,6 +27,7 @@ public class HBaseCRUDer {
         return put;
     }
 
+
     public void updateTable(Put put) {
         try {
             table.put(put);

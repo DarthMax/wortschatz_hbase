@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Marcel Kisilowski on 22.01.15.
+ * Organizes the Migration of Wortschatz database from mysql to Hbase
+ * Created by Marcel Kisilowski  on 22.01.15.
+ * Author: Marcel Kisilowski, Max Kießling, Wolfgang Otto
  */
 public class EmigrationManager {
     public HBaseCRUDer hBaseCRUDer;
@@ -30,6 +32,12 @@ public class EmigrationManager {
         }
     }
 
+    //private void
+
+    /**
+     * @todo make a mthod called createPuts in Class hBaseCRUDer??
+     * @param rows
+     */
     public void putData(List<String> rows) {
         hBaseCRUDer.setTable(tableName);
         List<Put> putList = new ArrayList<>();
