@@ -1,8 +1,6 @@
 package de.wortschatz.hbase;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -12,6 +10,7 @@ import java.util.Properties;
 public class SqlConnector{
 
     protected static SqlConnector connection;
+    private final String propFilePath = "IR2Praktikum/conf/sql_database.properties";
 
     public static Connection get_connection() throws SQLException, ClassNotFoundException {
         if (SqlConnector.connection==null) {
@@ -34,9 +33,9 @@ public class SqlConnector{
         String dbClass      = "com.mysql.jdbc.Driver";
         String dbHost       = "localhost";
         String dbPort       = "3306";
-        String dbName       = "ir2";
-        String dbUser       = "root";
-        String dbPassword   = "";
+        String dbName       = "db";
+        String dbUser       = "user";
+        String dbPassword   = "password";
 
         try {
             Properties prop = connectionPropoerties();
@@ -71,8 +70,7 @@ public class SqlConnector{
     private Properties connectionPropoerties() throws IOException {
         Properties prop = new Properties();
         InputStream input = null;
-
-        input = new FileInputStream("conf/sql_database.properties");
+        input = new FileInputStream(propFilePath);
         prop.load(input);
         input.close();
         return prop;
