@@ -9,7 +9,7 @@ import java.util.Properties;
 public class SqlConnector{
 
     protected static SqlConnector connection;
-    private final String propFilePath = System.getProperty("user.dir") + "/conf/sql_database.properties";
+    private final String propFilePath = System.getProperty("user.dir") + "/IR2Praktikum/conf/sql_database.properties";
 
     public static Connection get_connection() {
         if (SqlConnector.connection==null) {

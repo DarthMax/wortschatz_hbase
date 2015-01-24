@@ -55,4 +55,8 @@ public class CooccurrenceEmigrationManager {
 
         hBaseCRUDer.updateTable(putlist);
     }
+
+    public static void main(String[] args) {
+        new CooccurrenceEmigrationManager().migrate();
+    }
 }

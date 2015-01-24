@@ -55,6 +55,17 @@ public class HBaseCRUDer {
         scan.setMaxResultSize(maxResultSet);
         return scan;
     }
+
+    /**
+     *
+     * @param key
+     * @return
+     */
+    public Scan getScan(String key){
+        Scan scan = new Scan(Bytes.toBytes(key+'|'),Bytes.toBytes(key+"|z"));
+        return scan;
+    }
+
     public ResultScanner scanTable(Scan scan) {
         ResultScanner result = null;
         try {

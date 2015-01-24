@@ -24,11 +24,12 @@ public class SqlDataGetter {
         SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.get_connection());
         String query = "Select " +
                 "w1.word as word1, " +
-                "w2.word as word2 " +
+                "w2.word as word2, " +
                 "c.sig as sig, " +
-                "c.freq as freq, " +
+                "c.freq as freq " +
                 "from words w1, words w2, "+type+" c " +
                 "where w1.w_id=c.w1_id and c.w2_id=w2.w_id";
+        System.out.println("query = " + query);
 
         ArrayList<HashMap<String,Object>> rows = dataGetter.getDataFromQuery(query);
 
@@ -57,6 +58,7 @@ public class SqlDataGetter {
         try
         {
             Statement statement = con.createStatement();
+
             ResultSet resultSet = statement.executeQuery(query);
             ResultSetMetaData rsmd = resultSet.getMetaData();
 
@@ -78,6 +80,38 @@ public class SqlDataGetter {
         return resultList;
     }
 
+    /**
+     * Method to get ansewer for sql query as String
+     * @param query valid sql query
+     * @return answer as ArrayList of HashMaps
+     */
+    public ArrayList<HashMap<String, Object>> getDataFromQuery(String query,String word) {
+        ArrayList<HashMap<String, Object>> resultList = new ArrayList<>();
+        try
+        {
+            PreparedStatement statement = con.prepareStatement(query);
+            statement.setString(1,word);
+
+            ResultSet resultSet = statement.executeQuery();
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+
+            int nrOfColumns = rsmd.getColumnCount();
+            while (resultSet.next())
+            {
+                HashMap<String,Object> row = new HashMap<>();
+                for (int col=1;col<=nrOfColumns;col++) {
+                    row.put(rsmd.getColumnLabel(col), resultSet.getObject(col));
+                }
+
+                resultList.add(row);
+            }
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return resultList;
+    }
 
 }
 
