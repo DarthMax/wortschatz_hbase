@@ -40,20 +40,29 @@ public class CooccurrenceEmigrationManager {
 
     private void migrateCooccurrences(String type){
         CooccurrenceKeyGenerator generator = new CooccurrenceKeyGenerator(type);
-        ArrayList<Cooccurrence> cos = this.sqlDataGetter.getCooccurrenceData(type);
-        ArrayList<Put> putlist = new ArrayList<>();
+        ArrayList<Cooccurrence> cos;
+        int offset = 0;
+        int limit = 10000;
 
-        for(Cooccurrence co:cos) {
-            String key = generator.keyFor(co);
-            Put put = new Put(Bytes.toBytes(key));
-            put.add(Bytes.toBytes(columnFamily),Bytes.toBytes("sig"),Bytes.toBytes(co.getSignificance()));
-            put.add(Bytes.toBytes(columnFamily),Bytes.toBytes("freq"),Bytes.toBytes(co.getFrequency()));
-            put.add(Bytes.toBytes(columnFamily),Bytes.toBytes("word1"),Bytes.toBytes(co.getWord1()));
-            put.add(Bytes.toBytes(columnFamily),Bytes.toBytes("word2"),Bytes.toBytes(co.getWord2()));
-            putlist.add(put);
-        }
+        do {
+            cos = this.sqlDataGetter.getCooccurrenceData(type,offset,limit);
 
-        hBaseCRUDer.updateTable(putlist);
+            if (!cos.isEmpty()) {
+                ArrayList<Put> putlist = new ArrayList<>();
+                for (Cooccurrence co : cos) {
+                    String key = generator.keyFor(co);
+                    Put put = new Put(Bytes.toBytes(key));
+                    put.add(Bytes.toBytes(columnFamily), Bytes.toBytes("sig"), Bytes.toBytes(co.getSignificance()));
+                    put.add(Bytes.toBytes(columnFamily), Bytes.toBytes("freq"), Bytes.toBytes(co.getFrequency()));
+                    put.add(Bytes.toBytes(columnFamily), Bytes.toBytes("word1"), Bytes.toBytes(co.getWord1()));
+                    put.add(Bytes.toBytes(columnFamily), Bytes.toBytes("word2"), Bytes.toBytes(co.getWord2()));
+                    putlist.add(put);
+                }
+                hBaseCRUDer.updateTable(putlist);
+            }
+            offset += limit;
+        } while(!cos.isEmpty());
+
     }
 
     public static void main(String[] args) {
