@@ -48,6 +48,8 @@ public class CooccurrenceEmigrationManager {
             Put put = new Put(Bytes.toBytes(key));
             put.add(Bytes.toBytes(columnFamily),Bytes.toBytes("sig"),Bytes.toBytes(co.getSignificance()));
             put.add(Bytes.toBytes(columnFamily),Bytes.toBytes("freq"),Bytes.toBytes(co.getFrequency()));
+            put.add(Bytes.toBytes(columnFamily),Bytes.toBytes("word1"),Bytes.toBytes(co.getWord1()));
+            put.add(Bytes.toBytes(columnFamily),Bytes.toBytes("word2"),Bytes.toBytes(co.getWord2()));
             putlist.add(put);
         }
 
