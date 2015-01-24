@@ -20,6 +20,33 @@ public class SqlDataGetter {
     }
 
 
+    public ArrayList<Cooccurrence> getCooccurrenceData(String type){
+        SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.get_connection());
+        String query = "Select " +
+                "w1.word as word1, " +
+                "w2.word as word2 " +
+                "c.sig as sig, " +
+                "c.freq as freq, " +
+                "from words w1, words w2, "+type+" c " +
+                "where w1.w_id=c.w1_id and c.w2_id=w2.w_id";
+
+        ArrayList<HashMap<String,Object>> rows = dataGetter.getDataFromQuery(query);
+
+        ArrayList<Cooccurrence> data = new ArrayList<>();
+
+        for(HashMap<String,Object> row : rows) {
+            Cooccurrence co = new Cooccurrence(
+                    (String) row.get("word1"),
+                    (String) row.get("word1"),
+                    (Float) row.get("sig"),
+                    (Long)  row.get("freq"));
+            data.add(co);
+        }
+
+        return data;
+    }
+
+
     /**
      * Method to get ansewer for sql query as String
      * @param query valid sql query
@@ -38,8 +65,9 @@ public class SqlDataGetter {
             {
                 HashMap<String,Object> row = new HashMap<>();
                 for (int col=1;col<=nrOfColumns;col++) {
-                    row.put(rsmd.getColumnName(col), resultSet.getObject(col));
+                    row.put(rsmd.getColumnLabel(col), resultSet.getObject(col));
                 }
+
                 resultList.add(row);
             }
         }
@@ -49,5 +77,7 @@ public class SqlDataGetter {
         }
         return resultList;
     }
+
+
 }
 

@@ -1,6 +1,5 @@
 package de.wortschatz.hbase;
 import java.io.*;
-import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -12,7 +11,7 @@ public class SqlConnector{
     protected static SqlConnector connection;
     private final String propFilePath = System.getProperty("user.dir") + "/conf/sql_database.properties";
 
-    public static Connection get_connection() throws SQLException, ClassNotFoundException {
+    public static Connection get_connection() {
         if (SqlConnector.connection==null) {
             SqlConnector.connection = new SqlConnector();
         }
@@ -29,7 +28,7 @@ public class SqlConnector{
 
     private Connection conn;
 
-    private SqlConnector() throws SQLException, ClassNotFoundException {
+    private SqlConnector() {
         String dbClass      = "com.mysql.jdbc.Driver";
         String dbHost       = "localhost";
         String dbPort       = "3306";
@@ -52,8 +51,18 @@ public class SqlConnector{
             e.printStackTrace();
         }
 
-        Class.forName(dbClass);
-        this.conn = DriverManager.getConnection("jdbc:mysql://"+dbHost+":"+ dbPort+"/"+dbName+"?"+"user="+dbUser+"&"+"password="+dbPassword);
+        try {
+            Class.forName(dbClass);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            System.exit(42);
+        }
+        try {
+            this.conn = DriverManager.getConnection("jdbc:mysql://"+dbHost+":"+ dbPort+"/"+dbName+"?"+"user="+dbUser+"&"+"password="+dbPassword);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.exit(42);
+        }
     }
 
     public void finalize() {
