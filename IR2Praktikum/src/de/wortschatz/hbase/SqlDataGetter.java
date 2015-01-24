@@ -3,6 +3,7 @@ package de.wortschatz.hbase;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -14,39 +15,32 @@ public class SqlDataGetter {
 
     private Connection con = null;
 
-    public SqlDataGetter(){}
-
     public SqlDataGetter(Connection con) {
         this.con = con;
     }
 
 
-
-    public ArrayList<String> getDataFromQuery(String query) {
-        String separator = "|";
-        return getDataFromQuery(query, separator);
-    }
     /**
      * Method to get ansewer for sql query as String
      * @param query valid sql query
-     * @return answer as String
+     * @return answer as ArrayList of HashMaps
      */
-    public ArrayList<String> getDataFromQuery(String query, String separator) {
-        ArrayList<String> resultList = new ArrayList<String>();
+    public ArrayList<HashMap<String, Object>> getDataFromQuery(String query) {
+        ArrayList<HashMap<String, Object>> resultList = new ArrayList<>();
         try
         {
             Statement statement = con.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
             ResultSetMetaData rsmd = resultSet.getMetaData();
+
             int nrOfColumns = rsmd.getColumnCount();
             while (resultSet.next())
             {
-                String oneRow = "";
-                for (int oneColumn=1;oneColumn<=nrOfColumns;oneColumn++) {
-                    if (oneColumn != 1) oneRow += separator;
-                    oneRow += resultSet.getString(oneColumn);
+                HashMap<String,Object> row = new HashMap<>();
+                for (int col=1;col<=nrOfColumns;col++) {
+                    row.put(rsmd.getColumnName(col), resultSet.getObject(col));
                 }
-                resultList.add(oneRow);
+                resultList.add(row);
             }
         }
         catch (SQLException e)

@@ -39,7 +39,7 @@ public class EmigrationManager {
         hBaseCRUDer.updateTable(putList);
     }
     public static void main(String[] args){
-        String query = "select w1.word, 'l', 1-c.sig/1000000, w2.word from words w1, words w2, co_s c " +
+        String query = "select w1.word, 'l', c.sig, w2.word from words w1, words w2, co_s c " +
                 "where w1.w_id=c.w1_id and c.w2_id=w2.w_id";
         EmigrationManager e = new EmigrationManager();
         e.hBaseCRUDer.setTable(e.tableName);
