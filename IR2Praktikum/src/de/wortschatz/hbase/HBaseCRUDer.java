@@ -19,14 +19,6 @@ public class HBaseCRUDer {
         table = null;
     }
 
-    public Put createPut(String rowName,String columnFamily, String qualifier,String value){
-        AdvancedPut put = null;
-        boolean ret = false;
-        put = new AdvancedPut(Bytes.toBytes(rowName));
-        put.add(columnFamily,qualifier,value);
-        return put;
-    }
-
     public void updateTable(Put put) {
         try {
             table.put(put);
