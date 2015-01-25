@@ -12,7 +12,7 @@ public class SourceEmigrationManager extends EmigrationManager{
 
 
     public SourceEmigrationManager() {
-        this.tableName = "sources";
+        this.tableName = "sources1M";
         this.columnFamilies = new String[]{"sentence_ids"};
         hBaseCRUDer.setTable(this.tableName);
     }
@@ -24,10 +24,10 @@ public class SourceEmigrationManager extends EmigrationManager{
 
     private void migrateSentenceIds(){
         String query = "select " +
-                "sources.sources as source " +
+                "sources.source as source, " +
                 "inv_so.s_id as s_id " +
                 "from sources, inv_so " +
-                "where sources.so_id=inw_so.so_id";
+                "where sources.so_id=inv_so.so_id";
 
         migrateTuple(query, "sentence_ids", "", "long");
     }

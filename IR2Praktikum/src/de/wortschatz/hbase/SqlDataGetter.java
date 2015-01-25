@@ -96,7 +96,7 @@ public class SqlDataGetter {
             ResultSet resultSet = statement.executeQuery(query);
 
             while (resultSet.next()) {
-                tuples.add(new Tuple<>(resultSet.getObject(0), resultSet.getObject(1)));
+                tuples.add(new Tuple<>(resultSet.getObject(1), resultSet.getObject(2)));
             }
             return tuples;
         } catch(SQLException e) {

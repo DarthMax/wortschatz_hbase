@@ -18,7 +18,7 @@ public class CooccurrenceEmigrationManager {
     public HBaseCRUDer hBaseCRUDer;
     public SqlDataGetter sqlDataGetter;
 
-    public final String tableName = "cooccurrences1M";
+    public final String tableName = "cooccurrences";
     private final String columnFamily = "data";
 
 

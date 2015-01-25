@@ -7,6 +7,7 @@ import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
@@ -56,7 +57,7 @@ public class PerformanceTests {
 
     public static void mapToCSV(TreeMap<Integer,ArrayList<Double>> map,String fileName) {
         try {
-            CSVPrinter printer = new CSVPrinter(new PrintWriter(fileName), CSVFormat.DEFAULT);
+            CSVPrinter printer = new CSVPrinter(new PrintWriter(new FileWriter(fileName,true)), CSVFormat.DEFAULT);
             for(Integer seedSize:map.keySet()) {
                 for(Double time : map.get(seedSize))
                     printer.printRecord(seedSize,time);
@@ -70,32 +71,32 @@ public class PerformanceTests {
     public static void main(String[] args) {
         PerformanceTests pt = new PerformanceTests();
         ArrayList<String> randWords;
+        int iterations = 100;
+        String tblStr = "1M";
+        System.out.println("iterations = " + iterations);
+        int seedSize = 100;
         TreeMap<Integer,ArrayList<Double>> perfDataMysql = new TreeMap<>();
         TreeMap<Integer,ArrayList<Double>> perfDataHbase = new TreeMap<>();
-        for(int iterations=1;iterations<=1000;iterations*=10) {
-            System.out.println("iterations = " + iterations);
-            for (int seedSize = 1; seedSize <= 1000; seedSize *= 10) {
-                ArrayList<Double> hbaseTimeCompl = new ArrayList<>();
-                ArrayList<Double> mysqlTimeCompl = new ArrayList<>();
-                for (int i = 0; i < iterations; i++) {
-                    System.out.println(i+" seedSize = " + seedSize);
-                    randWords = pt.getWordSeed(seedSize);
-                    double hbaseTime = 0;
-                    double mysqlTime = 0;
-                    for (String randWord : randWords) {
-                        mysqlTime += pt.getMysqlPerformance(randWord);
-                        hbaseTime += pt.getHBasePerformance(randWord);
-                    }
-                    System.out.println(i+" seedSize = " + seedSize + " DONE");
-                    hbaseTimeCompl.add(hbaseTime);
-                    mysqlTimeCompl.add(mysqlTime);
-                }
-                perfDataMysql.put(seedSize, mysqlTimeCompl);
-                perfDataHbase.put(seedSize, hbaseTimeCompl);
+        ArrayList<Double> hbaseTimeCompl = new ArrayList<>();
+        ArrayList<Double> mysqlTimeCompl = new ArrayList<>();
+        for (int i = 0; i < iterations; i++) {
+            System.out.println(i+" seedSize = " + seedSize);
+            randWords = pt.getWordSeed(seedSize);
+            double hbaseTime = 0;
+            double mysqlTime = 0;
+            for (String randWord : randWords) {
+                mysqlTime += pt.getMysqlPerformance(randWord);
+                hbaseTime += pt.getHBasePerformance(randWord);
             }
-            System.out.println("iterations = " + iterations + " DONE");
-            mapToCSV(perfDataMysql, iterations + "iterationsMysqlPerf.csv");
-            mapToCSV(perfDataHbase, iterations + "iterationsHbasePerf.csv");
+            System.out.println(i+" seedSize = " + seedSize + " DONE");
+            hbaseTimeCompl.add(hbaseTime);
+            mysqlTimeCompl.add(mysqlTime);
         }
+        perfDataMysql.put(seedSize, mysqlTimeCompl);
+        perfDataHbase.put(seedSize, hbaseTimeCompl);
+        mapToCSV(perfDataMysql, tblStr+"MysqlPerf.csv");
+        mapToCSV(perfDataHbase, tblStr+"HbasePerf.csv");
+
+        System.out.println(" DONE");
     }
 }

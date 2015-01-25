@@ -60,7 +60,7 @@ public abstract class EmigrationManager {
 
         do {
             String limited_query = query + " limit " + limit + " offset " + offset;
-
+            System.out.println("limited_query = " + limited_query);
             tuples = dataGetter.getTuples(limited_query);
 
             if (!tuples.isEmpty()) {
@@ -69,27 +69,35 @@ public abstract class EmigrationManager {
                     byte[] key = Bytes.toBytes((String) tuple.a);
                     Put put = new Put(key);
 
-                    if(qualifier!="") {
+                    if(!qualifier.equals("")) {
                         switch (value_class) {
                             case "int":
                                 put.add(Bytes.toBytes(column_family), Bytes.toBytes(qualifier), Bytes.toBytes((Integer) tuple.b));
+                                break;
                             case "float":
                                 put.add(Bytes.toBytes(column_family), Bytes.toBytes(qualifier), Bytes.toBytes((Float) tuple.b));
+                                break;
                             case "long":
                                 put.add(Bytes.toBytes(column_family), Bytes.toBytes(qualifier), Bytes.toBytes((Long) tuple.b));
+                                break;
                             default:
                                 put.add(Bytes.toBytes(column_family), Bytes.toBytes(qualifier), Bytes.toBytes((String) tuple.b));
+                                break;
                         }
                     }else {
                         switch (value_class) {
                             case "int":
                                 put.add(Bytes.toBytes(column_family), Bytes.toBytes((Integer) tuple.b), Bytes.toBytes((Integer) tuple.b));
+                                break;
                             case "float":
                                 put.add(Bytes.toBytes(column_family), Bytes.toBytes((Float) tuple.b), Bytes.toBytes((Float) tuple.b));
+                                break;
                             case "long":
                                 put.add(Bytes.toBytes(column_family), Bytes.toBytes((Long) tuple.b), Bytes.toBytes((Long) tuple.b));
+                                break;
                             default:
                                 put.add(Bytes.toBytes(column_family), Bytes.toBytes((String) tuple.b), Bytes.toBytes((String) tuple.b));
+                                break;
                         }
                     }
 

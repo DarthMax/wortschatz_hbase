@@ -17,7 +17,7 @@ public class SentenceEmigrationManager extends EmigrationManager {
     }
 
     public void migrate() {
-        super.migrate();
+        //super.migrate();
         migrateSentences();
         migrateWords();
         migrateSources();
@@ -25,15 +25,15 @@ public class SentenceEmigrationManager extends EmigrationManager {
 
     private void migrateSentences() {
         String query = "select " +
-                "s_id as s_id " +
-                "sentence as sentence " +
-                "from words sentences";
+                "CAST(s_id as char), " +
+                "sentence " +
+                "from sentences";
         migrateTuple(query, "data", "value", "string");
     }
 
     private void migrateWords(){
         String query = "select " +
-                "inv_w.s_id as s_id " +
+                "CAST(inv_w.s_id as char) as s_id, " +
                 "w.word as word " +
                 "from words w, inv_w " +
                 "where w.w_id=inv_w.w_id";
@@ -42,10 +42,10 @@ public class SentenceEmigrationManager extends EmigrationManager {
 
     private void migrateSources(){
         String query = "select " +
-                "inv_so.s_id as s_id " +
+                "CAST(inv_so.s_id as char) as s_id, " +
                 "sources.source as source " +
                 "from sources, inv_so " +
-                "where source.so_id=inv_so.so_id";
+                "where sources.so_id=inv_so.so_id";
         migrateTuple(query, "sources", "", "string");
     }
 

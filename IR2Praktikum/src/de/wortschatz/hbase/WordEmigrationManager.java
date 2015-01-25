@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class WordEmigrationManager extends EmigrationManager{
 
     public WordEmigrationManager(){
-        this.tableName = "words";
+        this.tableName = "words1M";
         this.columnFamilies = new String[]{"data","sentence_ids"};
         hBaseCRUDer.setTable(this.tableName);
     }
@@ -31,19 +31,18 @@ public class WordEmigrationManager extends EmigrationManager{
 
     private void migrateFrequencies(){
         String query = "select " +
-                "word as word " +
+                "word as word, " +
                 "freq as freq " +
-                "from words w";
-
+                "from words";
         migrateTuple(query, "data", "freq", "long" );
     }
 
     private void migrateSentenceIds(){
         String query = "select " +
-                "w.word as word " +
+                "w.word as word, " +
                 "inv_w.s_id as s_id " +
                 "from words w, inv_w " +
-                "where w.w_id=inw_w.w_id";
+                "where w.w_id=inv_w.w_id";
 
         migrateTuple(query, "sentence_ids", "", "long");
     }

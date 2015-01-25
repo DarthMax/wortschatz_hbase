@@ -24,8 +24,9 @@ public class Cooccurrence {
     }
 
     public Cooccurrence(Result row) {
-        word2 = Arrays.toString(row.getValue(Bytes.toBytes("data"), Bytes.toBytes("word2")));
-        word1 = Arrays.toString(row.getValue(Bytes.toBytes("data"), Bytes.toBytes("word1")));
+        //TODO CHECK IF GOOD! ->
+        word2 = Bytes.toString(row.getValue(Bytes.toBytes("data"), Bytes.toBytes("word2")));
+        word1 = Bytes.toString(row.getValue(Bytes.toBytes("data"), Bytes.toBytes("word1")));
         byte[] sigByte = row.getValue(Bytes.toBytes("data"),Bytes.toBytes("sig"));
         significance = ByteBuffer.wrap(sigByte).getFloat();
         byte[] freqByte = row.getValue(Bytes.toBytes("data"),Bytes.toBytes("freq"));
