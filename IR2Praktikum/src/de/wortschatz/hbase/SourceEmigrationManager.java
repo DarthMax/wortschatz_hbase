@@ -8,46 +8,28 @@ import java.util.ArrayList;
 /**
  * Created by max on 24.01.15.
  */
-public class SourceEmigrationManager {
-    public HBaseCRUDer hBaseCRUDer;
-    public SqlDataGetter sqlDataGetter;
+public class SourceEmigrationManager extends EmigrationManager{
 
-    public final String tableName = "sources";
 
     public SourceEmigrationManager() {
-        this.hBaseCRUDer = new HBaseCRUDer(HBaseConnector.get_connection());
-        hBaseCRUDer.setTable(tableName);
-
-        this.sqlDataGetter = new SqlDataGetter(SqlConnector.get_connection());
+        this.tableName = "sources";
+        this.columnFamilies = new String[]{"sentence_ids"};
+        hBaseCRUDer.setTable(this.tableName);
     }
 
     public void migrate(){
-        SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.get_connection());
-        ArrayList<Source> sources;
+        super.migrate();
+        migrateSentenceIds();
+    }
 
-        int offset = 0;
-        int limit = 10000;
+    private void migrateSentenceIds(){
+        String query = "select " +
+                "sources.sources as source " +
+                "inv_so.s_id as s_id " +
+                "from sources, inv_so " +
+                "where sources.so_id=inw_so.so_id";
 
-        do {
-            sources = dataGetter.getSources(offset,limit);
-
-            if (!sources.isEmpty()) {
-                ArrayList<Put> putlist = new ArrayList<>();
-                for (Source source : sources) {
-                    byte[] key = Bytes.toBytes(source.getValue());
-
-                    Put put = new Put(key);
-
-                    for(int sentence : source.getSentences()) {
-                        put.add(Bytes.toBytes("sentence_ids"), Bytes.toBytes(sentence), Bytes.toBytes(sentence));
-                    }
-                    putlist.add(put);
-                }
-                hBaseCRUDer.updateTable(putlist);
-            }
-            offset += limit;
-        } while(!sources.isEmpty());
-
+        migrateTuple(query, "sentence_ids", "", "long");
     }
 
     public static void main(String[] args) {

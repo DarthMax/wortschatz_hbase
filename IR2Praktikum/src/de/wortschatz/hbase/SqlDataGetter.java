@@ -1,6 +1,8 @@
 package de.wortschatz.hbase;
 
 
+import org.jruby.compiler.ir.Tuple;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,56 +87,23 @@ public class SqlDataGetter {
         return data;
     }
 
-    public ArrayList<Word> getWords(int offset, int limit) {
-        String query = "select word, freq from words" +
-                " limit " + limit +
-                " offset " + offset;
+    public ArrayList<Tuple<Object,Object>> getTuples(String query) {
+        try {
+            ArrayList<Tuple<Object, Object>> tuples = new ArrayList<>();
 
-        System.out.println("query = " + query);
+            Connection con = SqlConnector.get_connection();
+            Statement statement = con.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
 
-        ArrayList<HashMap<String,Object>> rows = getDataFromQuery(query);
-        ArrayList<Word> words = new ArrayList<>();
-
-        for(HashMap<String,Object> row : rows) {
-            words.add(new Word((String) row.get("word"), (Long) row.get("freq")));
+            while (resultSet.next()) {
+                tuples.add(new Tuple<>(resultSet.getObject(0), resultSet.getObject(1)));
+            }
+            return tuples;
+        } catch(SQLException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
         }
-
-        System.out.println("words.size = " + words.size());
-
-        return words;
     }
-
-    public ArrayList<Sentence> getSentences(int offset, int limit) {
-        String query = "select text, id from sentences" +
-                " limit " + limit +
-                " offset " + offset;
-
-        ArrayList<HashMap<String,Object>> rows = getDataFromQuery(query);
-        ArrayList<Sentence> sentences = new ArrayList<>();
-
-        for(HashMap<String,Object> row : rows) {
-            sentences.add(new Sentence((Integer) row.get("id"), (String) row.get("text")));
-        }
-
-        return sentences;
-    }
-
-
-    public ArrayList<Source> getSources(int offset, int limit) {
-        String query = "select source from sources" +
-                " limit " + limit +
-                " offset " + offset;
-
-        ArrayList<HashMap<String,Object>> rows = getDataFromQuery(query);
-        ArrayList<Source> sources = new ArrayList<>();
-
-        for(HashMap<String,Object> row : rows) {
-            sources.add(new Source((String) row.get("source")));
-        }
-
-        return sources;
-    }
-
 
 
     /**

@@ -2,58 +2,53 @@ package de.wortschatz.hbase;
 
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.jruby.compiler.ir.Tuple;
 
 import java.util.ArrayList;
 
 /**
  * Created by max on 24.01.15.
  */
-public class SentenceEmigrationManager {
-    public HBaseCRUDer hBaseCRUDer;
-    public SqlDataGetter sqlDataGetter;
-
-    public final String tableName = "sentences";
-
-    public SentenceEmigrationManager() {
-        this.hBaseCRUDer = new HBaseCRUDer(HBaseConnector.get_connection());
-        hBaseCRUDer.setTable(tableName);
-
-        this.sqlDataGetter = new SqlDataGetter(SqlConnector.get_connection());
+public class SentenceEmigrationManager extends EmigrationManager {
+    public SentenceEmigrationManager(){
+        this.tableName = "sentences";
+        this.columnFamilies = new String[]{"data", "words", "sources"};
+        hBaseCRUDer.setTable(this.tableName);
     }
 
-    public void migrate(){
-        SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.get_connection());
-        ArrayList<Sentence> sentences;
-
-        int offset = 0;
-        int limit = 10000;
-
-        do {
-            sentences = dataGetter.getSentences(offset, limit);
-
-            if (!sentences.isEmpty()) {
-                ArrayList<Put> putlist = new ArrayList<>();
-                for (Sentence sentence : sentences) {
-                    byte[] key = Bytes.toBytes(sentence.getId());
-
-                    Put put = new Put(key);
-
-                    put.add(Bytes.toBytes("data"),Bytes.toBytes("text"),Bytes.toBytes(sentence.getText()));
-                    for(String word : sentence.getWords()) {
-                        put.add(Bytes.toBytes("words"), Bytes.toBytes(word), Bytes.toBytes(word));
-                    }
-                    for(String source : sentence.getSources()) {
-                        put.add(Bytes.toBytes("sources"), Bytes.toBytes(source), Bytes.toBytes(source));
-                    }
-
-                    putlist.add(put);
-                }
-                hBaseCRUDer.updateTable(putlist);
-            }
-            offset += limit;
-        } while(!sentences.isEmpty());
-
+    public void migrate() {
+        super.migrate();
+        migrateSentences();
+        migrateWords();
+        migrateSources();
     }
+
+    private void migrateSentences() {
+        String query = "select " +
+                "s_id as s_id " +
+                "sentence as sentence " +
+                "from words sentences";
+        migrateTuple(query, "data", "value", "string");
+    }
+
+    private void migrateWords(){
+        String query = "select " +
+                "inv_w.s_id as s_id " +
+                "w.word as word " +
+                "from words w, inv_w " +
+                "where w.w_id=inv_w.w_id";
+        migrateTuple(query, "words", "", "string");
+    }
+
+    private void migrateSources(){
+        String query = "select " +
+                "inv_so.s_id as s_id " +
+                "sources.source as source " +
+                "from sources, inv_so " +
+                "where source.so_id=inv_so.so_id";
+        migrateTuple(query, "sources", "", "string");
+    }
+
 
     public static void main(String[] args) {
         new SentenceEmigrationManager().migrate();
