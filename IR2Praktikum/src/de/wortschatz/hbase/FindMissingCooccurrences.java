@@ -43,4 +43,8 @@ public class FindMissingCooccurrences {
         } while(!cos.isEmpty());
     }
 
+    public static void main(String[] args) {
+        FindMissingCooccurrences.find_missing();
+    }
+
 }
