@@ -1,8 +1,20 @@
 package de.wortschatz.hbase;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.client.ResultScanner;
+import org.apache.hadoop.hbase.util.Bytes;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.ByteBuffer;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.TreeMap;
 
 /**
  * Created by Marcel Kisilowski on 24.01.15.
@@ -13,20 +25,20 @@ public class PerformanceTests {
     public PerformanceTests() {
         sqlDataGetter = new SqlDataGetter(SqlConnector.get_connection());
         hBaseCRUDer = new HBaseCRUDer(HBaseConnector.get_connection());
-        hBaseCRUDer.setTable("cooccurrences");
+        hBaseCRUDer.setTable("cooccurrences1M");
     }
 
-    public double getMysqlPerformance(String query,String word) {
+    public double getMysqlPerformance(String word) {
         double startTime=0;
         startTime = System.currentTimeMillis();
-        sqlDataGetter.getDataFromQuery(query,word);
+        sqlDataGetter.getCooccurrenceData(word);
         return (System.currentTimeMillis()-startTime)*1.0/ 1000;
     }
 
     public double getHBasePerformance(String startRow) {
         double startTime;
         startTime = System.currentTimeMillis();
-        hBaseCRUDer.scanTable(hBaseCRUDer.getScan(startRow));
+        hBaseCRUDer.convertToCooccurrences(hBaseCRUDer.scanTable(hBaseCRUDer.getScan(startRow)));
         return (System.currentTimeMillis()-startTime)*1.0/1000 ;
     }
 
@@ -42,32 +54,48 @@ public class PerformanceTests {
         return result;
     }
 
+    public static void mapToCSV(TreeMap<Integer,ArrayList<Double>> map,String fileName) {
+        try {
+            CSVPrinter printer = new CSVPrinter(new PrintWriter(fileName), CSVFormat.DEFAULT);
+            for(Integer seedSize:map.keySet()) {
+                for(Double time : map.get(seedSize))
+                    printer.printRecord(seedSize,time);
+            }
+            printer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void main(String[] args) {
         PerformanceTests pt = new PerformanceTests();
-        String query = "select w1.word, 'l', 1-c.sig/1000000, w2.word from words w1, words w2, co_s c " +
-                "where w1.w_id=c.w1_id and c.w2_id=w2.w_id and w1.word=\"der\";";
-        String startRow = "der";
-
         ArrayList<String> randWords;
-        double hbaseTimeCompl=0;
-        double mysqlTimeCompl=0;
-        int iterations=100;
-        int seedSize = 1000;
-        for(int i = 0;i<iterations;i++) {
-            randWords = pt.getWordSeed(seedSize);
-            double hbaseTime=0;
-            double mysqlTime=0;
-            for (String randWord : randWords) {
-                query = "select w1.word, 'l', 1-c.sig/1000000, w2.word from words w1, words w2, co_s c " +
-                        "where w1.w_id=c.w1_id and c.w2_id=w2.w_id and w1.word=?";
-                mysqlTime += pt.getMysqlPerformance(query,randWord);
-                hbaseTime += pt.getHBasePerformance(randWord);
+        TreeMap<Integer,ArrayList<Double>> perfDataMysql = new TreeMap<>();
+        TreeMap<Integer,ArrayList<Double>> perfDataHbase = new TreeMap<>();
+        for(int iterations=1;iterations<=1000;iterations*=10) {
+            System.out.println("iterations = " + iterations);
+            for (int seedSize = 1; seedSize <= 1000; seedSize *= 10) {
+                ArrayList<Double> hbaseTimeCompl = new ArrayList<>();
+                ArrayList<Double> mysqlTimeCompl = new ArrayList<>();
+                for (int i = 0; i < iterations; i++) {
+                    System.out.println(i+" seedSize = " + seedSize);
+                    randWords = pt.getWordSeed(seedSize);
+                    double hbaseTime = 0;
+                    double mysqlTime = 0;
+                    for (String randWord : randWords) {
+                        mysqlTime += pt.getMysqlPerformance(randWord);
+                        hbaseTime += pt.getHBasePerformance(randWord);
+                    }
+                    System.out.println(i+" seedSize = " + seedSize + " DONE");
+                    hbaseTimeCompl.add(hbaseTime);
+                    mysqlTimeCompl.add(mysqlTime);
+                }
+                perfDataMysql.put(seedSize, mysqlTimeCompl);
+                perfDataHbase.put(seedSize, hbaseTimeCompl);
             }
-            hbaseTimeCompl+=hbaseTime;
-            mysqlTimeCompl+=mysqlTime;
-
+            System.out.println("iterations = " + iterations + " DONE");
+            mapToCSV(perfDataMysql, iterations + "iterationsMysqlPerf.csv");
+            mapToCSV(perfDataHbase, iterations + "iterationsHbasePerf.csv");
         }
-        System.out.println("mysqlTime = " + mysqlTimeCompl/iterations);
-        System.out.println("hbaseTime = " + hbaseTimeCompl/iterations);
     }
 }

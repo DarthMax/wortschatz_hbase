@@ -6,6 +6,9 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 import java.io.InterruptedIOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -88,4 +91,17 @@ public class HBaseCRUDer {
         }
         return result;
     }
+    public ArrayList<Cooccurrence> convertToCooccurrences(ResultScanner scanner) {
+        Result row;
+        ArrayList<Cooccurrence> resultList = new ArrayList<>();
+        try {
+            while ((row = scanner.next())!=null) {
+                resultList.add(new Cooccurrence(row));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return resultList;
+    }
+
 }

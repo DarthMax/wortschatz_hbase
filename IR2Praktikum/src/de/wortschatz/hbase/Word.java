@@ -10,13 +10,13 @@ import java.util.HashSet;
 public class Word {
     private String value;
     private Long frequency;
-    private HashSet<Integer> sentenceIDs;
+    private HashSet<Long> sentenceIDs;
 
     public String getValue() {
         return value;
     }
 
-    public HashSet<Integer> getSentenceIDs() {
+    public HashSet<Long> getSentenceIDs() {
         return sentenceIDs;
     }
 
@@ -38,16 +38,16 @@ public class Word {
         String query = "select " +
                 "inv_w.s_id as sentence_id " +
                 "from words w, inv_w " +
-                "where words.word='"+this.value+" " +
-                "and word.id=inv_w.w_id";
-
+                "where w.word=? " +
+                "and w.w_id=inv_w.w_id";
+        System.out.println("query = " + query);
         SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.get_connection());
 
-        ArrayList<HashMap<String,Object>> rows = dataGetter.getDataFromQuery(query);
-        HashSet<Integer> sentence_ids = new HashSet<>();
+        ArrayList<HashMap<String,Object>> rows = dataGetter.getDataFromQuery(query,this.value);
+        HashSet<Long> sentence_ids = new HashSet<>();
 
         for(HashMap<String,Object> row : rows) {
-            sentence_ids.add((int) row.get("sentence_id"));
+            sentence_ids.add((long) row.get("sentence_id"));
         }
 
         this.sentenceIDs = sentence_ids;

@@ -23,18 +23,54 @@ public class SqlDataGetter {
 
 
     public ArrayList<Cooccurrence> getCooccurrenceData(String type,int offset,int limit){
+        SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.get_connection());
         String query = "Select " +
                 "w1.word as word1, " +
                 "w2.word as word2, " +
                 "c.sig as sig, " +
-                "c.freq as freq, " +
+                "c.freq as freq " +
                 "from words w1, words w2, "+type+" c " +
                 "where w1.w_id=c.w1_id and c.w2_id=w2.w_id " +
-                "limit"+limit+" "+
-                "offset"+offset+" ";
+                "limit "+limit+" "+
+                "offset "+offset+" ";
+
+        System.out.println("query = " + query);
 
         ArrayList<HashMap<String,Object>> rows = getDataFromQuery(query);
 
+        ArrayList<Cooccurrence> data = new ArrayList<>();
+
+        for(HashMap<String,Object> row : rows) {
+            Cooccurrence co = new Cooccurrence(
+                    (String) row.get("word1"),
+                    (String) row.get("word2"),
+                    (Float) row.get("sig"),
+                    (Long)  row.get("freq"));
+            data.add(co);
+        }
+
+        System.out.println("data.size = " + data.size());
+
+        return data;
+    }
+    public ArrayList<Cooccurrence> getCooccurrenceData(String searchWord){
+        SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.get_connection());
+        String querySentence = "Select " +
+                "w1.word as word1, " +
+                "w2.word as word2, " +
+                "c.sig as sig, " +
+                "c.freq as freq " +
+                "from words w1, words w2, co_s c " +
+                "where w1.w_id=c.w1_id and c.w2_id=w2.w_id and w1.word=?";
+        String queryNeighbour = "Select " +
+                "w1.word as word1, " +
+                "w2.word as word2, " +
+                "c.sig as sig, " +
+                "c.freq as freq " +
+                "from words w1, words w2, co_n c " +
+                "where w1.w_id=c.w1_id and c.w2_id=w2.w_id and w1.word=?";
+        ArrayList<HashMap<String,Object>> rows = dataGetter.getDataFromQuery(querySentence,searchWord);
+        rows.addAll(dataGetter.getDataFromQuery(queryNeighbour,searchWord));
         ArrayList<Cooccurrence> data = new ArrayList<>();
 
         for(HashMap<String,Object> row : rows) {
@@ -54,12 +90,16 @@ public class SqlDataGetter {
                 " limit " + limit +
                 " offset " + offset;
 
+        System.out.println("query = " + query);
+
         ArrayList<HashMap<String,Object>> rows = getDataFromQuery(query);
         ArrayList<Word> words = new ArrayList<>();
 
         for(HashMap<String,Object> row : rows) {
             words.add(new Word((String) row.get("word"), (Long) row.get("freq")));
         }
+
+        System.out.println("words.size = " + words.size());
 
         return words;
     }

@@ -34,7 +34,7 @@ public class FindMissingCooccurrences {
                     String key = generator.keyFor(co);
 
                     if (keys.contains(key)) {
-                        System.out.println("Key already exists"+key);
+                        System.out.println("Key already exists -> "+key);
                     }else {
                         keys.add(key);
                     }
