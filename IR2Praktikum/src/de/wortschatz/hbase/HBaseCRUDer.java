@@ -56,6 +56,19 @@ public class HBaseCRUDer {
         return scan;
     }
 
+    public Result get(Get get) {
+        try {
+            return table.get(get);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
+
+
     /**
      *
      * @param key
