@@ -1,18 +1,10 @@
 package de.wortschatz.hbase;
 
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.HBaseAdmin;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.jruby.compiler.ir.Tuple;
-
-import java.io.IOException;
-import java.util.ArrayList;
-
 /**
- * Created by max on 24.01.15.
+ * Emigration manager that migrates the word data from SQL to HBase.
+ * The row key is the word.
+ * The data column family stores the frequency the words occurrences in the corpus.
+ * The sentence_ids column family stores the ID of every sentence the word occurred in.
  */
 public class WordEmigrationManager extends EmigrationManager{
 
@@ -28,7 +20,9 @@ public class WordEmigrationManager extends EmigrationManager{
         migrateSentenceIds();
     }
 
-
+    /**
+     * Migrate the frequency data for every word
+     */
     private void migrateFrequencies(){
         String query = "select " +
                 "word as word, " +
@@ -37,6 +31,9 @@ public class WordEmigrationManager extends EmigrationManager{
         migrateTuple(query, "data", "freq", "long" );
     }
 
+    /**
+     * Migrate the word sentence connections by creating a column for every sentence connected to the word.
+     */
     private void migrateSentenceIds(){
         String query = "select " +
                 "w.word as word, " +

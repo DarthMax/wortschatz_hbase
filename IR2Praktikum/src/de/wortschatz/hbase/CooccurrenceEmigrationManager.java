@@ -12,24 +12,23 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Marcel Kisilowski on 22.01.15.
+ * Emigration manager that migrates cooccurrence data from SQL to HBase.
+ * The row key is contructet by the pattern word1|type|inv_sig|word2.
+ * The both words, significance and frequency are stored in the column family 'data'
  */
-public class CooccurrenceEmigrationManager {
-    public HBaseCRUDer hBaseCRUDer;
-    public SqlDataGetter sqlDataGetter;
+public class CooccurrenceEmigrationManager extends EmigrationManager{
 
-    public final String tableName = "cooccurrences";
-    private final String columnFamily = "data";
-
-
-    public CooccurrenceEmigrationManager() {
-        this.hBaseCRUDer = new HBaseCRUDer(HBaseConnector.get_connection());
-        hBaseCRUDer.setTable(tableName);
-
-        this.sqlDataGetter = new SqlDataGetter(SqlConnector.get_connection());
+    public CooccurrenceEmigrationManager(){
+        this.tableName = "cooccurrences";
+        this.columnFamilies = new String[]{"data"};
+        hBaseCRUDer.setTable(this.tableName);
     }
 
+    /**
+     * Migrate sentence and neighbourhood cooccurrences
+     */
     public void migrate() {
+        super.migrate();
         String[] cooccurrence_types = {"co_s","co_n"};
 
         for (String type:cooccurrence_types) {
@@ -38,6 +37,10 @@ public class CooccurrenceEmigrationManager {
     }
 
 
+    /**
+     * Migrate all cooccurrences of the given type. Data is collected in chunks of 10000 rows
+     * @param type The cooccurrence type to migrate specified by the table name of cooccurrence data
+     */
     private void migrateCooccurrences(String type){
         CooccurrenceKeyGenerator generator = new CooccurrenceKeyGenerator(type);
         ArrayList<Cooccurrence> cos;
@@ -52,10 +55,10 @@ public class CooccurrenceEmigrationManager {
                 for (Cooccurrence co : cos) {
                     String key = generator.keyFor(co);
                     Put put = new Put(Bytes.toBytes(key));
-                    put.add(Bytes.toBytes(columnFamily), Bytes.toBytes("sig"), Bytes.toBytes(co.getSignificance()));
-                    put.add(Bytes.toBytes(columnFamily), Bytes.toBytes("freq"), Bytes.toBytes(co.getFrequency()));
-                    put.add(Bytes.toBytes(columnFamily), Bytes.toBytes("word1"), Bytes.toBytes(co.getWord1()));
-                    put.add(Bytes.toBytes(columnFamily), Bytes.toBytes("word2"), Bytes.toBytes(co.getWord2()));
+                    put.add(Bytes.toBytes(columnFamilies[0]), Bytes.toBytes("sig"), Bytes.toBytes(co.getSignificance()));
+                    put.add(Bytes.toBytes(columnFamilies[0]), Bytes.toBytes("freq"), Bytes.toBytes(co.getFrequency()));
+                    put.add(Bytes.toBytes(columnFamilies[0]), Bytes.toBytes("word1"), Bytes.toBytes(co.getWord1()));
+                    put.add(Bytes.toBytes(columnFamilies[0]), Bytes.toBytes("word2"), Bytes.toBytes(co.getWord2()));
                     putlist.add(put);
                 }
                 hBaseCRUDer.updateTable(putlist);

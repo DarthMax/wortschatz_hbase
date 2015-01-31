@@ -1,13 +1,11 @@
 package de.wortschatz.hbase;
 
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.util.Bytes;
-import org.jruby.compiler.ir.Tuple;
-
-import java.util.ArrayList;
-
 /**
- * Created by max on 24.01.15.
+ * Emigration manager that migrates the sentence data from SQL to HBase.
+ * The row key is the sentence id extracted from the SQL database.
+ * The data column family stores the sentence in the value column.
+ * The words column family stores every word of the sentence.
+ * The sources column family stores every source url for a sentence.
  */
 public class SentenceEmigrationManager extends EmigrationManager {
     public SentenceEmigrationManager(){
@@ -17,12 +15,15 @@ public class SentenceEmigrationManager extends EmigrationManager {
     }
 
     public void migrate() {
-        //super.migrate();
+        super.migrate();
         migrateSentences();
         migrateWords();
         migrateSources();
     }
 
+    /**
+     * Migrate the sentence string.
+     */
     private void migrateSentences() {
         String query = "select " +
                 "CAST(s_id as char), " +
@@ -31,6 +32,9 @@ public class SentenceEmigrationManager extends EmigrationManager {
         migrateTuple(query, "data", "value", "string");
     }
 
+    /**
+     * Migrate the word sentence connections creating a column for every word connected to the sentence.
+     */
     private void migrateWords(){
         String query = "select " +
                 "CAST(inv_w.s_id as char) as s_id, " +
@@ -40,6 +44,9 @@ public class SentenceEmigrationManager extends EmigrationManager {
         migrateTuple(query, "words", "", "string");
     }
 
+    /**
+     * Migrate the sentence source connections creating a column for every URL.
+     */
     private void migrateSources(){
         String query = "select " +
                 "CAST(inv_so.s_id as char) as s_id, " +

@@ -2,20 +2,32 @@ package de.wortschatz.hbase;
 
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
-
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 /**
- * Created by max on 24.01.15.
+ * Class to represent a Cooccurrence between to words with significance and frequency
  */
 public class Cooccurrence {
 
+    /** The base word  */
     private String word1;
+
+    /** The target word */
     private String word2;
+
+    /** Significance of cooccurrence word2 in relation to word1 */
     private Float significance;
+
+    /** Frequency of cooccurrence word1-word2 */
     private Long frequency;
 
+    /**
+     * Constructor for class Cooccurrence
+     * @param word1 The base word
+     * @param word2 The target word
+     * @param significance Significance of cooccurrence word1 -word2
+     * @param frequency Frequency of cooccurrence word1 -word2
+     */
     public Cooccurrence(String word1, String word2, Float significance, Long frequency) {
         this.word1 = word1;
         this.word2 = word2;
@@ -23,6 +35,11 @@ public class Cooccurrence {
         this.frequency = frequency;
     }
 
+
+    /**
+     * Construct Cooccurrence object from HBase row
+     * @param row an HBase row
+     */
     public Cooccurrence(Result row) {
         //TODO CHECK IF GOOD! ->
         word2 = Bytes.toString(row.getValue(Bytes.toBytes("data"), Bytes.toBytes("word2")));
@@ -54,6 +71,9 @@ public class Cooccurrence {
     }
 
     @Override
+    /**
+     *
+     */
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Cooccurrence)) return false;

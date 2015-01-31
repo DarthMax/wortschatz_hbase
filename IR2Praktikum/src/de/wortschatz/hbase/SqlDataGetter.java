@@ -24,6 +24,13 @@ public class SqlDataGetter {
     }
 
 
+    /**
+     * Retrives a chunk of cooccurrence pairs from the database and turns them into Cooccurrence objects.
+     * @param type The type of cooccurrences specified by the table name
+     * @param offset The number of the start row
+     * @param limit The number of rows to fetch from the database
+     * @return A list of Cooccurrence objects
+     */
     public ArrayList<Cooccurrence> getCooccurrenceData(String type,int offset,int limit){
         SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.get_connection());
         String query = "Select " +
@@ -87,6 +94,11 @@ public class SqlDataGetter {
         return data;
     }
 
+    /**
+     * Runs the query on the database and returns the first two values of each row in the result set as a tuple.
+     * @param query The query to perform against the database. Must have at least two return values per row
+     * @return A list of tuples. One for each row in the result set
+     */
     public ArrayList<Tuple<Object,Object>> getTuples(String query) {
         try {
             ArrayList<Tuple<Object, Object>> tuples = new ArrayList<>();

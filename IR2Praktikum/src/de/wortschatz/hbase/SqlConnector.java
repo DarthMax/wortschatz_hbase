@@ -5,10 +5,19 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-
+/**
+ * Singelton class that provides a connection to an SQL database instance
+ */
 public class SqlConnector{
 
+    /**
+     * The singelton instance
+     */
     protected static SqlConnector connection;
+
+    /**
+     * The location of the configuration file of the database connection
+     */
     private final String propFilePath = System.getProperty("user.dir") + "/IR2Praktikum/conf/sql_database.properties";
 
     public static Connection get_connection() {
@@ -18,6 +27,9 @@ public class SqlConnector{
         return SqlConnector.connection.conn;
     };
 
+    /**
+     * Close the database connection
+     */
     public static void close() {
         if (SqlConnector.connection!=null) {
             SqlConnector.connection.close();
@@ -28,6 +40,11 @@ public class SqlConnector{
 
     private Connection conn;
 
+
+    /**
+     * Establish a connection to the database using JDBC. Connection parameters can be configured using the connection
+     * property file 'conf/sql_database.properties'
+     */
     private SqlConnector() {
         String dbClass      = "com.mysql.jdbc.Driver";
         String dbHost       = "localhost";
@@ -65,6 +82,9 @@ public class SqlConnector{
         }
     }
 
+    /**
+     * Make sure the database connection is closed when the object is destroyed.
+     */
     public void finalize() {
         if(!(this.conn==null)){
             try {
@@ -75,7 +95,11 @@ public class SqlConnector{
         }
     }
 
-
+    /**
+     * Open and parse the database connection property file.
+     * @return The database connection properties.
+     * @throws IOException
+     */
     private Properties connectionPropoerties() throws IOException {
         Properties prop = new Properties();
         InputStream input = null;

@@ -1,12 +1,9 @@
 package de.wortschatz.hbase;
 
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.util.Bytes;
-
-import java.util.ArrayList;
-
 /**
- * Created by max on 24.01.15.
+ * Emigration manager that migrates the source data from SQL to HBase.
+ * The row key is the source URL.
+ * The sentence_ids column family stores the id of every sentence connected to the source
  */
 public class SourceEmigrationManager extends EmigrationManager{
 
@@ -22,6 +19,9 @@ public class SourceEmigrationManager extends EmigrationManager{
         migrateSentenceIds();
     }
 
+    /**
+     * Migrate the sentence source connections by creating a column for every sentence connected to the source.
+     */
     private void migrateSentenceIds(){
         String query = "select " +
                 "sources.source as source, " +
