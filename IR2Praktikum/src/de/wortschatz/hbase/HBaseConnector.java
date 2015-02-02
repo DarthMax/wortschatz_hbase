@@ -24,9 +24,11 @@ public class HBaseConnector{
         return HBaseConnector.connection.conf;
     };
 
-
     private Configuration conf;
 
+    /**
+     *
+     */
     public HBaseConnector() {
         this.conf = HBaseConfiguration.create();
         this.conf.setQuietMode(true);

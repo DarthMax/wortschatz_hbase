@@ -21,14 +21,24 @@ import java.util.TreeMap;
  * Created by Marcel Kisilowski on 24.01.15.
  */
 public class PerformanceTests {
+
     SqlDataGetter sqlDataGetter;
     HBaseCRUDer hBaseCRUDer;
+
+    /**
+     *
+     */
     public PerformanceTests() {
         sqlDataGetter = new SqlDataGetter(SqlConnector.get_connection());
         hBaseCRUDer = new HBaseCRUDer(HBaseConnector.get_connection());
         hBaseCRUDer.setTable("cooccurrences1M");
     }
 
+    /**
+     *
+     * @param word
+     * @return
+     */
     public double getMysqlPerformance(String word) {
         double startTime=0;
         startTime = System.currentTimeMillis();
@@ -36,6 +46,11 @@ public class PerformanceTests {
         return (System.currentTimeMillis()-startTime)*1.0/ 1000;
     }
 
+    /**
+     *
+     * @param startRow
+     * @return
+     */
     public double getHBasePerformance(String startRow) {
         double startTime;
         startTime = System.currentTimeMillis();
@@ -43,6 +58,11 @@ public class PerformanceTests {
         return (System.currentTimeMillis()-startTime)*1.0/1000 ;
     }
 
+    /**
+     *
+     * @param size
+     * @return
+     */
     public ArrayList<String> getWordSeed(int size) {
         String query = "SELECT word FROM words\n" +
                 "ORDER BY RAND()\n" +
@@ -55,11 +75,16 @@ public class PerformanceTests {
         return result;
     }
 
-    public static void mapToCSV(TreeMap<Integer,ArrayList<Double>> map,String fileName) {
+    /**
+     *
+     * @param map
+     * @param fileName
+     */
+    public static <I,D> void mapToCSV(TreeMap<I,ArrayList<D>> map,String fileName) {
         try {
             CSVPrinter printer = new CSVPrinter(new PrintWriter(new FileWriter(fileName,true)), CSVFormat.DEFAULT);
-            for(Integer seedSize:map.keySet()) {
-                for(Double time : map.get(seedSize))
+            for(I seedSize:map.keySet()) {
+                for(D time : map.get(seedSize))
                     printer.printRecord(seedSize,time);
             }
             printer.close();
@@ -68,13 +93,17 @@ public class PerformanceTests {
         }
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         PerformanceTests pt = new PerformanceTests();
         ArrayList<String> randWords;
         int iterations = 100;
         String tblStr = "1M";
         System.out.println("iterations = " + iterations);
-        int seedSize = 100;
+        int seedSize = 1000;
         TreeMap<Integer,ArrayList<Double>> perfDataMysql = new TreeMap<>();
         TreeMap<Integer,ArrayList<Double>> perfDataHbase = new TreeMap<>();
         ArrayList<Double> hbaseTimeCompl = new ArrayList<>();

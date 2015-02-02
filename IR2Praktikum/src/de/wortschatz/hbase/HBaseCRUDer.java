@@ -16,12 +16,22 @@ import java.util.List;
  */
 public class HBaseCRUDer {
     private HTable table;
+
     private Configuration conf;
+
+    /**
+     *
+     * @param conf
+     */
     public HBaseCRUDer(Configuration conf){
         this.conf=conf;
         table = null;
     }
 
+    /**
+     * Perform a Put
+     * @param put
+     */
     public void updateTable(Put put) {
         try {
             table.put(put);
@@ -31,6 +41,11 @@ public class HBaseCRUDer {
             e.printStackTrace();
         }
     }
+
+    /**
+     *  Perform a Put with a list look: {@link #updateTable(Put put) updateTable}
+     * @param put
+     */
     public void updateTable(List<Put> put) {
         try {
             table.put(put);
@@ -41,6 +56,10 @@ public class HBaseCRUDer {
         }
     }
 
+    /**
+     * Set current table
+     * @param tableName
+     */
     public void setTable(String tableName) {
         try {
             if(table != null && !table.getTableDescriptor().getNameAsString().equals(tableName)) {
@@ -53,12 +72,24 @@ public class HBaseCRUDer {
 
     }
 
+    /**
+     * Prepare a Scan-Object for later use.
+     * @param startRow
+     * @param stopRow
+     * @param maxResultSet
+     * @return
+     */
     public Scan getScan(String startRow,String stopRow, long maxResultSet){
         Scan scan = new Scan(Bytes.toBytes(startRow),Bytes.toBytes(stopRow));
         scan.setMaxResultSize(maxResultSet);
         return scan;
     }
 
+    /**
+     * Perform a get request.
+     * @param get
+     * @return
+     */
     public Result get(Get get) {
         try {
             return table.get(get);
@@ -67,10 +98,6 @@ public class HBaseCRUDer {
             return null;
         }
     }
-
-
-
-
 
     /**
      *
@@ -82,6 +109,11 @@ public class HBaseCRUDer {
         return scan;
     }
 
+    /**
+     * Perform a Scan request.
+     * @param scan
+     * @return
+     */
     public ResultScanner scanTable(Scan scan) {
         ResultScanner result = null;
         try {
@@ -91,6 +123,13 @@ public class HBaseCRUDer {
         }
         return result;
     }
+
+    /**
+     * Convert Result to Cooccurrences-Resultlist
+     * todo -> very ungeneric, maybe wrong class
+     * @param scanner
+     * @return
+     */
     public ArrayList<Cooccurrence> convertToCooccurrences(ResultScanner scanner) {
         Result row;
         ArrayList<Cooccurrence> resultList = new ArrayList<>();
