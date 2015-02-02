@@ -1,6 +1,9 @@
 package de.wortschatz.hbase;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HColumnDescriptor;
+import org.apache.hadoop.hbase.HTableDescriptor;
+import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -10,13 +13,15 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Marcel Kisilowski on 22.01.15.
  */
 public class HBaseCRUDer {
-    private HTable table;
 
+    private HTable table;
+    private HBaseAdmin admin;
     private Configuration conf;
 
     /**
@@ -25,6 +30,12 @@ public class HBaseCRUDer {
      */
     public HBaseCRUDer(Configuration conf){
         this.conf=conf;
+        try {
+            admin = new HBaseAdmin(conf);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(0);
+        }
         table = null;
     }
 
@@ -141,6 +152,43 @@ public class HBaseCRUDer {
             e.printStackTrace();
         }
         return resultList;
+    }
+    /**
+     *
+     * @param map
+     * @return
+     */
+    private boolean createTables(Map<String,List<String>> map) {
+        List<HColumnDescriptor> colList;
+        for (String tableName : map.keySet()) {
+            colList = new ArrayList<>();
+            for (String columnDescriptor : map.get(tableName)) {
+                colList.add(new HColumnDescriptor(columnDescriptor));
+            }
+            createTable(TableName.valueOf(tableName), colList);
+        }
+        return true;
+    }
+
+    /**
+     *
+     * @param tableName
+     * @param columnDescriptors
+     * @return
+     */
+    private boolean createTable(TableName tableName, List<HColumnDescriptor> columnDescriptors) {
+        try {
+            HTableDescriptor tableDescriptor = new HTableDescriptor(tableName);
+            for (HColumnDescriptor columnDescriptor : columnDescriptors) {
+                tableDescriptor.addFamily(columnDescriptor);
+            }
+            admin.createTable(tableDescriptor);
+            System.out.println("@ Table created: " + tableName.getNameAsString());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
 }
