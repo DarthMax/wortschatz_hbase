@@ -1,4 +1,4 @@
-package de.wortschatz.hbase;
+package de.wortschatz.hbase.test;
 
 import junit.framework.TestCase;
 
