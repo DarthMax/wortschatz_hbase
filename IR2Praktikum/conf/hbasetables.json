@@ -1,0 +1,13 @@
+{
+ "tables":[
+    {
+    "tableName": "testTable",
+    "columnFamilies": [
+      {
+        "familyName": "testFam1"
+      },
+      {
+        "familyName": "testFam2"
+      }]
+    }]
+}
