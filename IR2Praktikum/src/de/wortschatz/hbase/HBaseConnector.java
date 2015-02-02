@@ -17,7 +17,7 @@ public class HBaseConnector{
      * Get the HBase configuration instance
      * @return The HBase configuration instance
      */
-    public static Configuration get_connection() {
+    public static Configuration getConnection() {
         if (HBaseConnector.connection==null) {
             HBaseConnector.connection = new HBaseConnector();
         }
