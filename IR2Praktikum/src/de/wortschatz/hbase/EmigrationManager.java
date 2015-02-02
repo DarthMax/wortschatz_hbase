@@ -33,7 +33,7 @@ public abstract class EmigrationManager {
      * Instantiate a new EmigrationManager, creating new HBaseCRUDer and SqlDataGetter
      */
     public EmigrationManager() {
-        this.hBaseCRUDer = new HBaseCRUDer(HBaseConnector.get_connection());
+        this.hBaseCRUDer = new HBaseCRUDer(HBaseConnector.getConnection());
         this.sqlDataGetter = new SqlDataGetter(SqlConnector.get_connection());
     }
 
@@ -50,7 +50,7 @@ public abstract class EmigrationManager {
             tableDescriptor.addFamily(new HColumnDescriptor(columnFamily));
         }
         try {
-            HBaseAdmin admin = new HBaseAdmin(HBaseConnector.get_connection());
+            HBaseAdmin admin = new HBaseAdmin(HBaseConnector.getConnection());
             admin.createTable(tableDescriptor);
             admin.close();
         } catch (IOException e) {

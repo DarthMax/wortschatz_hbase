@@ -158,7 +158,7 @@ public class HBaseCRUDer {
      * @param map
      * @return
      */
-    private boolean createTables(Map<String,List<String>> map) {
+    public boolean createTables(Map<String,List<String>> map) {
         List<HColumnDescriptor> colList;
         for (String tableName : map.keySet()) {
             colList = new ArrayList<>();
