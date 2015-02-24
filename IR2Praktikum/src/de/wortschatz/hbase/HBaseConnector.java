@@ -22,7 +22,7 @@ public class HBaseConnector{
             HBaseConnector.connection = new HBaseConnector();
         }
         return HBaseConnector.connection.conf;
-    };
+    }
 
     private Configuration conf;
 

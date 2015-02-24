@@ -25,7 +25,7 @@ public class SqlConnector{
             SqlConnector.connection = new SqlConnector();
         }
         return SqlConnector.connection.conn;
-    };
+    }
 
     /**
      * Close the database connection
