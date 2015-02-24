@@ -1,0 +1,2 @@
+zooKeeperQuorum     = localhost
+zooKeeperClientPort = 2181
