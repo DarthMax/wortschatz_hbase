@@ -25,7 +25,7 @@ public class SqlConnector{
             SqlConnector.connection = new SqlConnector();
         }
         return SqlConnector.connection.conn;
-    };
+    }
 
     /**
      * Close the database connection
@@ -54,7 +54,7 @@ public class SqlConnector{
         String dbPassword   = "password";
 
         try {
-            Properties prop = connectionPropoerties();
+            Properties prop = connectionProperties();
 
             dbClass     = prop.getProperty("dbClass");
             dbHost      = prop.getProperty("dbHost");
@@ -100,7 +100,7 @@ public class SqlConnector{
      * @return The database connection properties.
      * @throws IOException
      */
-    private Properties connectionPropoerties() throws IOException {
+    private Properties connectionProperties() throws IOException {
         Properties prop = new Properties();
         InputStream input = null;
         input = new FileInputStream(propFilePath);
