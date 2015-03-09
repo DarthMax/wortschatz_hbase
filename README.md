@@ -130,9 +130,9 @@ Resource: hbase.apache.org/book.html
 
 ### Cluster Config
 
-Master: arielle.tm.informatik.uni-leipzig.de
-Zookeeper Server: nemo.tm.informatik.uni-leipzig.de, arielle.tm.informatik.uni-leipzig.de, atlantis.tm.informatik.uni-leipzig.de
-Regionserver: nemo.tm.informatik.uni-leipzig.de, arielle.tm.informatik.uni-leipzig.de, atlantis.tm.informatik.uni-leipzig.de
+- Master: arielle.tm.informatik.uni-leipzig.de
+- Zookeeper Server: nemo.tm.informatik.uni-leipzig.de, arielle.tm.informatik.uni-leipzig.de, atlantis.tm.informatik.uni-leipzig.de
+- Regionserver: nemo.tm.informatik.uni-leipzig.de, arielle.tm.informatik.uni-leipzig.de, atlantis.tm.informatik.uni-leipzig.de
 
 ### Setup
 
@@ -185,7 +185,7 @@ To start additional regionservers run
 ```bash
 hadoop/bin/local-regionservers.sh start x y z ...
 ```
-where x y z are port offsets
+where `x y z...` are port offsets
 
 ### Stop the Cluster
 
