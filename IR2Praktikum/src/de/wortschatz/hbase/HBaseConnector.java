@@ -23,7 +23,7 @@ public class HBaseConnector{
     /**
      * The location of the configuration file of the HBase connection
      */
-    private final String propFilePath = System.getProperty("user.dir") + ".conf/sql2hbase/hbase.properties";
+    private final String propFilePath = System.getProperty("user.home") + "/.conf/sql2hbase/hbase.properties";
 
     /**
      * Get the HBase configuration instance
