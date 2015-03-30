@@ -23,7 +23,7 @@ public class HBaseConnector{
     /**
      * The location of the configuration file of the HBase connection
      */
-    private final String propFilePath = System.getProperty("user.dir") + "/IR2Praktikum/conf/hbase.properties";
+    private final String propFilePath = System.getProperty("user.dir") + ".conf/sql2hbase/hbase.properties";
 
     /**
      * Get the HBase configuration instance
@@ -42,7 +42,7 @@ public class HBaseConnector{
      * create a new Connection to the configured HBase server
      */
     public HBaseConnector() {
-        String zooKeeperQuorum     = "testing";
+        String zooKeeperQuorum     = "localhost";
         String zooKeeperClientPort = "2181";
 
         try {

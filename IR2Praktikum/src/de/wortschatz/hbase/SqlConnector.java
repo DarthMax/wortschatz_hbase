@@ -18,7 +18,7 @@ public class SqlConnector{
     /**
      * The location of the configuration file of the database connection
      */
-    private final String propFilePath = System.getProperty("user.dir") + "/IR2Praktikum/conf/sql_database.properties";
+    private final String propFilePath = System.getProperty("user.dir") + ".conf/sql2hbase/sql_database.properties";
 
     public static Connection get_connection() {
         if (SqlConnector.connection==null) {
