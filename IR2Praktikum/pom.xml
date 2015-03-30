@@ -41,7 +41,7 @@
 					<manifest>
 						<addClasspath>true</addClasspath>
 						<classpathPrefix>lib/</classpathPrefix>
-						<mainClass>de.wortschatz.hbase.CooccurrenceEmigrationManager</mainClass>
+						<mainClass>de.wortschatz.hbase.Sql2HBase</mainClass>
 					</manifest>
 				</archive>
 			</configuration>

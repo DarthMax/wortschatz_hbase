@@ -55,9 +55,4 @@ public class SentenceEmigrationManager extends EmigrationManager {
                 "where sources.so_id=inv_so.so_id";
         migrateTuple(query, "sources", "", "string");
     }
-
-
-    public static void main(String[] args) {
-        new SentenceEmigrationManager().migrate();
-    }
 }

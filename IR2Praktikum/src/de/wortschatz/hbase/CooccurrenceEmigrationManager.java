@@ -29,7 +29,7 @@ public class CooccurrenceEmigrationManager extends EmigrationManager{
      */
     public void migrate() {
         super.migrate();
-        String[] cooccurrence_types = {"co_s","co_n"};
+        String[] cooccurrence_types = {"co_n"};
 
         for (String type:cooccurrence_types) {
             migrateCooccurrences(type);
@@ -45,7 +45,7 @@ public class CooccurrenceEmigrationManager extends EmigrationManager{
         CooccurrenceKeyGenerator generator = new CooccurrenceKeyGenerator(type);
         ArrayList<Cooccurrence> cos;
         int offset = 0;
-        int limit = 10000;
+        int limit = 10;
 
         do {
             cos = this.sqlDataGetter.getCooccurrenceData(type,offset,limit);
@@ -63,7 +63,9 @@ public class CooccurrenceEmigrationManager extends EmigrationManager{
                 }
                 hBaseCRUDer.updateTable(putlist);
             }
+            if(limit < 1000000) {limit = limit * 100;}
             offset += limit;
+
         } while(!cos.isEmpty());
 
     }

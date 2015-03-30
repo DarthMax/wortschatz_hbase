@@ -14,7 +14,7 @@ import java.util.ArrayList;
 /**
  * Abstract class that manages the migration of a SQl database to an HBase table
  */
-public abstract class EmigrationManager {
+public abstract class EmigrationManager implements Runnable {
 
     /** An instance of HBaseCRUDer to manage HBase transactions */
     public HBaseCRUDer hBaseCRUDer;
@@ -128,5 +128,9 @@ public abstract class EmigrationManager {
             }
             offset += limit;
         } while(!tuples.isEmpty());
+    }
+
+    public void run() {
+        this.migrate();
     }
 }

@@ -38,10 +38,10 @@ public class SqlDataGetter {
                 "w2.word as word2, " +
                 "c.sig as sig, " +
                 "c.freq as freq " +
-                "from words w1, words w2, "+type+" c " +
-                "where w1.w_id=c.w1_id and c.w2_id=w2.w_id " +
-                "limit "+limit+" "+
-                "offset "+offset+" ";
+                "from words w1 " +
+                "join (select w_id from words limit "+limit+" offset "+offset+" ) as temp on temp.w_id=w1.w_id " +
+                "inner join "+type+" c on w1.w_id=c.w1_id " +
+                "inner join words w2 on c.w2_id=w2.w_id; ";
 
         System.out.println("query = " + query);
 
