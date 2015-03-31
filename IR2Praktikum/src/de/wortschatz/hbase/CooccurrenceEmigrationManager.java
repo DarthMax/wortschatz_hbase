@@ -29,7 +29,7 @@ public class CooccurrenceEmigrationManager extends EmigrationManager{
      */
     public void migrate() {
         super.migrate();
-        String[] cooccurrence_types = {"co_n"};
+        String[] cooccurrence_types = {"co_n","co_s"};
 
         for (String type:cooccurrence_types) {
             migrateCooccurrences(type);
