@@ -51,7 +51,7 @@ public class CooccurrenceEmigrationManager extends EmigrationManager{
             cos = this.sqlDataGetter.getCooccurrenceData(type,offset,limit);
 
             if (!cos.isEmpty()) {
-                ArrayList<Put> putlist = new ArrayList<>();
+                ArrayList<Put> putlist = new ArrayList<Put>();
                 for (Cooccurrence co : cos) {
                     String key = generator.keyFor(co);
                     Put put = new Put(Bytes.toBytes(key));

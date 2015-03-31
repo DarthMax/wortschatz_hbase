@@ -42,8 +42,11 @@ public class PerformanceTests {
     public double getMysqlPerformance(String word) {
         double startTime=0;
         startTime = System.currentTimeMillis();
-        sqlDataGetter.getCooccurrenceData(word);
-        return (System.currentTimeMillis()-startTime)*1.0/ 1000;
+        int resultSize = sqlDataGetter.getCooccurrenceData(word).size();
+        double execTime = (System.currentTimeMillis()-startTime)*1.0/1000;
+        System.out.println("MYSQL result size: " + resultSize);
+        System.out.println("MYSQL execTime: " + execTime);
+        return execTime ;
     }
 
     /**
@@ -54,8 +57,11 @@ public class PerformanceTests {
     public double getHBasePerformance(String startRow) {
         double startTime;
         startTime = System.currentTimeMillis();
-        hBaseCRUDer.convertToCooccurrences(hBaseCRUDer.scanTable(hBaseCRUDer.getScan(startRow)));
-        return (System.currentTimeMillis()-startTime)*1.0/1000 ;
+        int resultSize = hBaseCRUDer.convertToCooccurrences(hBaseCRUDer.scanTable(hBaseCRUDer.getScan(startRow))).size();
+        double execTime = (System.currentTimeMillis()-startTime)*1.0/1000;
+        System.out.println("HBASE result size: " + resultSize);
+        System.out.println("HBASE execTime: " + execTime);
+        return execTime ;
     }
 
     /**
