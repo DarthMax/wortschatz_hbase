@@ -103,7 +103,7 @@ public class PerformanceTests {
         PerformanceTests pt = new PerformanceTests();
         ArrayList<String> randWords;
         int iterations = 100;
-        String tblStr = "1M";
+        String tblStr = HBaseProploader.getProperties().getProperty("tablePostfix");
         System.out.println("iterations = " + iterations);
         int seedSize = 1000;
         TreeMap<Integer,ArrayList<Double>> perfDataMysql = new TreeMap<>();
