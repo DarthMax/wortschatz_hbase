@@ -20,7 +20,7 @@ public class HBaseInstallation {
         return true;
     }
     public static Map<String,List<String>> jsonToMap(String jsonfile) {
-        Map<String,List<String>> resultMap = new HashMap<>();
+        Map<String,List<String>> resultMap = new HashMap<String,List<String>>();
         List<String> famList;
         String tableName;
         try {
