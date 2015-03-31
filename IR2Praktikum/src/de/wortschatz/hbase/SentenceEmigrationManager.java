@@ -9,7 +9,7 @@ package de.wortschatz.hbase;
  */
 public class SentenceEmigrationManager extends EmigrationManager {
     public SentenceEmigrationManager(){
-        this.tableName = "sentences";
+        this.tableName = "sentences"+HBaseProploader.getProperties().getProperty("tablePostfix");;
         this.columnFamilies = new String[]{"data", "words", "sources"};
         hBaseCRUDer.setTable(this.tableName);
     }

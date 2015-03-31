@@ -6,16 +6,10 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.util.Bytes;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * Created by Marcel Kisilowski on 24.01.15.
@@ -29,9 +23,11 @@ public class PerformanceTests {
      *
      */
     public PerformanceTests() {
+
         sqlDataGetter = new SqlDataGetter(SqlConnector.get_connection());
         hBaseCRUDer = new HBaseCRUDer(HBaseConnector.getConnection());
-        hBaseCRUDer.setTable("cooccurrences");
+        String postfix = HBaseProploader.getProperties().getProperty("tablePostfix");
+        hBaseCRUDer.setTable("cooccurrences"+postfix);
     }
 
     /**

@@ -9,7 +9,7 @@ public class SourceEmigrationManager extends EmigrationManager{
 
 
     public SourceEmigrationManager() {
-        this.tableName = "sources1M";
+        this.tableName = "sources"+HBaseProploader.getProperties().getProperty("tablePostfix");;
         this.columnFamilies = new String[]{"sentence_ids"};
         hBaseCRUDer.setTable(this.tableName);
     }

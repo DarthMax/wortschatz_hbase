@@ -19,7 +19,7 @@ import java.util.List;
 public class CooccurrenceEmigrationManager extends EmigrationManager{
 
     public CooccurrenceEmigrationManager(){
-        this.tableName = "cooccurrences";
+        this.tableName = "cooccurrences"+HBaseProploader.getProperties().getProperty("tablePostfix");
         this.columnFamilies = new String[]{"data"};
         hBaseCRUDer.setTable(this.tableName);
     }

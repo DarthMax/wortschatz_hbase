@@ -9,7 +9,7 @@ package de.wortschatz.hbase;
 public class WordEmigrationManager extends EmigrationManager{
 
     public WordEmigrationManager(){
-        this.tableName = "words1M";
+        this.tableName = "words"+HBaseProploader.getProperties().getProperty("tablePostfix");;
         this.columnFamilies = new String[]{"data","sentence_ids"};
         hBaseCRUDer.setTable(this.tableName);
     }
