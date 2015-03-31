@@ -1,2 +1,3 @@
 zooKeeperQuorum     = localhost
 zooKeeperClientPort = 2181
+db_prefix = 10_
