@@ -63,8 +63,8 @@ public class CooccurrenceEmigrationManager extends EmigrationManager{
                 }
                 hBaseCRUDer.updateTable(putlist);
             }
-            if(limit < 1000000) {limit = limit * 100;}
             offset += limit;
+            if(limit < 1000000) {limit = limit * 100;}
 
         } while(!cos.isEmpty());
 
