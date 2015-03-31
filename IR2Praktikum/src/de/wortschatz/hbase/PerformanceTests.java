@@ -31,7 +31,7 @@ public class PerformanceTests {
     public PerformanceTests() {
         sqlDataGetter = new SqlDataGetter(SqlConnector.get_connection());
         hBaseCRUDer = new HBaseCRUDer(HBaseConnector.getConnection());
-        hBaseCRUDer.setTable("cooccurrences1M");
+        hBaseCRUDer.setTable("cooccurrences");
     }
 
     /**
