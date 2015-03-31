@@ -40,8 +40,6 @@ public class PerformanceTests {
         startTime = System.currentTimeMillis();
         int resultSize = sqlDataGetter.getCooccurrenceData(word).size();
         double execTime = (System.currentTimeMillis()-startTime)*1.0/1000;
-        System.out.println("MYSQL result size: " + resultSize);
-        System.out.println("MYSQL execTime: " + execTime);
         return execTime ;
     }
 
@@ -55,8 +53,6 @@ public class PerformanceTests {
         startTime = System.currentTimeMillis();
         int resultSize = hBaseCRUDer.convertToCooccurrences(hBaseCRUDer.scanTable(hBaseCRUDer.getScan(startRow))).size();
         double execTime = (System.currentTimeMillis()-startTime)*1.0/1000;
-        System.out.println("HBASE result size: " + resultSize);
-        System.out.println("HBASE execTime: " + execTime);
         return execTime ;
     }
 
