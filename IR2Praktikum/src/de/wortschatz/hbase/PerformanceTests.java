@@ -35,12 +35,15 @@ public class PerformanceTests {
      * @param word
      * @return
      */
-    public double getMysqlPerformance(String word) {
+    public HashMap<String, Object> getMysqlPerformance(String word) {
+        HashMap<String, Object> returnData = new HashMap<String, Object>();
         double startTime=0;
         startTime = System.currentTimeMillis();
         int resultSize = sqlDataGetter.getCooccurrenceData(word).size();
         double execTime = (System.currentTimeMillis()-startTime)*1.0/1000;
-        return execTime ;
+        returnData.put("execTime", execTime);
+        returnData.put("resultSize", resultSize);
+        return returnData ;
     }
 
     /**
@@ -48,12 +51,15 @@ public class PerformanceTests {
      * @param startRow
      * @return
      */
-    public double getHBasePerformance(String startRow) {
+    public HashMap<String, Object> getHBasePerformance(String startRow) {
+        HashMap<String, Object> returnData = new HashMap<String, Object>();
         double startTime;
         startTime = System.currentTimeMillis();
         int resultSize = hBaseCRUDer.convertToCooccurrences(hBaseCRUDer.scanTable(hBaseCRUDer.getScan(startRow))).size();
         double execTime = (System.currentTimeMillis()-startTime)*1.0/1000;
-        return execTime ;
+        returnData.put("execTime", execTime);
+        returnData.put("resultSize", resultSize);
+        return returnData ;
     }
 
     /**
@@ -93,6 +99,33 @@ public class PerformanceTests {
 
     /**
      *
+     * @param rows
+     * @param fileName
+     */
+    public static void mapToCSV(ArrayList<HashMap<String, Object>> rows,String fileName) {
+        try {
+            File f = new File(fileName);
+            rows.
+            if(f.exists() && !f.isDirectory()) { //file exists
+                CSVPrinter printer = new CSVPrinter(new PrintWriter(f), CSVFormat.DEFAULT);
+                printer.printRecords(rows);
+                printer.close();
+            } else { //new file
+                CSVPrinter printer = new CSVPrinter(new PrintWriter(f), CSVFormat.DEFAULT);
+                printer.printRecords(rows);
+                printer.close();
+            }
+
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     *
      * @param args
      */
     public static void main(String[] args) {
@@ -102,27 +135,46 @@ public class PerformanceTests {
         String tblStr = HBaseProploader.getProperties().getProperty("tablePostfix");
         System.out.println("iterations = " + iterations);
         int seedSize = 1000;
-        TreeMap<Integer,ArrayList<Double>> perfDataMysql = new TreeMap<>();
-        TreeMap<Integer,ArrayList<Double>> perfDataHbase = new TreeMap<>();
-        ArrayList<Double> hbaseTimeCompl = new ArrayList<>();
-        ArrayList<Double> mysqlTimeCompl = new ArrayList<>();
+        ArrayList<HashMap<String, Object>> csvData = new ArrayList<>();
         for (int i = 0; i < iterations; i++) {
             System.out.println(i+" seedSize = " + seedSize);
             randWords = pt.getWordSeed(seedSize);
             double hbaseTime = 0;
             double mysqlTime = 0;
+            int hbaseNumberOfNullRequest = 0;
+            int mysqlNumberOfNullRequest = 0;
+            double hbaseNumberOfNullRequestTime = 0;
+            double mysqlNumberOfNullRequestTime = 0;
             for (String randWord : randWords) {
-                mysqlTime += pt.getMysqlPerformance(randWord);
-                hbaseTime += pt.getHBasePerformance(randWord);
+                HashMap<String,Object> hbaseResult = pt.getHBasePerformance(randWord);
+                HashMap<String,Object> mysqlResult = pt.getMysqlPerformance(randWord);
+                mysqlTime += (double) mysqlResult.get("execTime");
+                hbaseTime += (double) hbaseResult.get("execTime");
+                if ((int) mysqlResult.get("resultSize")==0) {
+                    mysqlNumberOfNullRequest += 1;
+                    mysqlNumberOfNullRequestTime += mysqlTime;
+                }
+                if ((int) hbaseResult.get("resultSize")==0) {
+                    hbaseNumberOfNullRequest += 1;
+                    hbaseNumberOfNullRequestTime += hbaseTime;
+                }
             }
-            System.out.println(i+" seedSize = " + seedSize + " DONE");
-            hbaseTimeCompl.add(hbaseTime);
-            mysqlTimeCompl.add(mysqlTime);
+            System.out.println(i + " seedSize = " + seedSize + " DONE");
+            HashMap<String, Object> mysqlData = new HashMap<String, Object>();
+            mysqlData.put("dbase", "Mysql"+tblStr);
+            mysqlData.put("runtime", mysqlTime);
+            mysqlData.put("nullReq", mysqlNumberOfNullRequest);
+            mysqlData.put("nullReqTime", mysqlNumberOfNullRequestTime);
+            HashMap<String, Object> hbaseData = new HashMap<String, Object>();
+            hbaseData.put("dbase", "HBase"+tblStr);
+            hbaseData.put("nullReq", hbaseNumberOfNullRequest);
+            hbaseData.put("runtime", hbaseTime);
+            hbaseData.put("nullReqTime", hbaseNumberOfNullRequestTime);
+            csvData.add(mysqlData);
+            csvData.add(hbaseData);
         }
-        perfDataMysql.put(seedSize, mysqlTimeCompl);
-        perfDataHbase.put(seedSize, hbaseTimeCompl);
-        mapToCSV(perfDataMysql, tblStr+"MysqlPerf.csv");
-        mapToCSV(perfDataHbase, tblStr+"HbasePerf.csv");
+        mapToCSV(csvData, tblStr+"Perf.csv");
+//        mapToCSV(perfDataHbase, tblStr+"HbasePerf.csv");
 
         System.out.println(" DONE");
     }
