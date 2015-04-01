@@ -24,7 +24,7 @@ public class PerformanceTests {
      */
     public PerformanceTests() {
 
-        sqlDataGetter = new SqlDataGetter(SqlConnector.get_connection());
+        sqlDataGetter = new SqlDataGetter(SqlConnector.getConnection());
         hBaseCRUDer = new HBaseCRUDer(HBaseConnector.getConnection());
         String postfix = HBaseProploader.getProperties().getProperty("tablePostfix");
         hBaseCRUDer.setTable("cooccurrences"+postfix);
@@ -105,7 +105,6 @@ public class PerformanceTests {
     public static void mapToCSV(ArrayList<HashMap<String, Object>> rows,String fileName) {
         try {
             File f = new File(fileName);
-            rows.
             if(f.exists() && !f.isDirectory()) { //file exists
                 CSVPrinter printer = new CSVPrinter(new PrintWriter(f), CSVFormat.DEFAULT);
                 printer.printRecords(rows);

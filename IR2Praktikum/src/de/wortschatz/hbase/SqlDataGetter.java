@@ -6,8 +6,6 @@ import org.jruby.compiler.ir.Tuple;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 
 /**
@@ -32,7 +30,7 @@ public class SqlDataGetter {
      * @return A list of Cooccurrence objects
      */
     public ArrayList<Cooccurrence> getCooccurrenceData(String type,int offset,int limit){
-        SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.get_connection());
+        SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.getConnection());
         String query = "Select " +
                 "w1.word as word1, " +
                 "w2.word as word2, " +
@@ -63,7 +61,7 @@ public class SqlDataGetter {
         return data;
     }
     public ArrayList<Cooccurrence> getCooccurrenceData(String searchWord){
-        SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.get_connection());
+        SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.getConnection());
         String querySentence = "Select " +
                 "w1.word as word1, " +
                 "w2.word as word2, " +
@@ -103,7 +101,7 @@ public class SqlDataGetter {
         try {
             ArrayList<Tuple<Object, Object>> tuples = new ArrayList<>();
 
-            Connection con = SqlConnector.get_connection();
+            Connection con = SqlConnector.getConnection();
             Statement statement = con.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
 

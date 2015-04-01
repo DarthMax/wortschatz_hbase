@@ -34,7 +34,7 @@ public abstract class EmigrationManager implements Runnable {
      */
     public EmigrationManager() {
         this.hBaseCRUDer = new HBaseCRUDer(HBaseConnector.getConnection());
-        this.sqlDataGetter = new SqlDataGetter(SqlConnector.get_connection());
+        this.sqlDataGetter = new SqlDataGetter(SqlConnector.getConnection());
     }
 
     /**
@@ -73,7 +73,7 @@ public abstract class EmigrationManager implements Runnable {
      * @param value_class The class the second value whill be cast to (string, int, float, long)
      */
     protected void migrateTuple(String query, String column_family, String qualifier, String value_class){
-        SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.get_connection());
+        SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.getConnection());
         ArrayList<Tuple<Object,Object>> tuples;
         int offset = 0;
         int limit = 10000;

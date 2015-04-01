@@ -20,7 +20,7 @@ public class SqlConnector{
      */
     private final String propFilePath = System.getProperty("user.home") + "/.conf/sql2hbase/sql_database.properties";
 
-    public static Connection get_connection() {
+    public static Connection getConnection() {
         if (SqlConnector.connection==null) {
             SqlConnector.connection = new SqlConnector();
         }

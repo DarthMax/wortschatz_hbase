@@ -36,7 +36,7 @@ public class CooccurrenceKeyGenerator {
      * Set the value used for normalizing the significance value to be <= 1
      */
     private void setNorm(){
-        SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.get_connection());
+        SqlDataGetter dataGetter = new SqlDataGetter(SqlConnector.getConnection());
         String query = "SELECT MAX(sig) as 'max' from "+type+";";
 
         norm =  (Float) dataGetter.getDataFromQuery(query).get(0).get("max");

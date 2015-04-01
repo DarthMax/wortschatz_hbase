@@ -5,6 +5,7 @@ import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.client.coprocessor.AggregationClient;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
@@ -133,6 +134,18 @@ public class HBaseCRUDer {
             e.printStackTrace();
         }
         return result;
+    }
+    public Long countRowsInTable(String tableName) {
+        AggregationClient aggregationClient = new AggregationClient(conf);
+        Scan scan = new Scan();
+        Long rowCount = 0L;
+        scan.addFamily(Bytes.toBytes("d"));
+        try {
+            rowCount = aggregationClient.rowCount(TableName.valueOf(tableName), null, scan);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+        return rowCount;
     }
 
     /**
