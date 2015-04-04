@@ -11,23 +11,25 @@ import java.util.HashMap;
 public class CooccurrenceValidationTest implements ValidationTest {
     @Override
     public boolean migrationWasValid() {
-
-        return false;
+        boolean migrationWasValid = getHBaseCooccurrences()==getMysqlCooccurrences();
+        return migrationWasValid;
     }
-    private int getHBaseCooccurrences() {
+    private long getHBaseCooccurrences() {
         HBaseCRUDer hbase = new HBaseCRUDer(HBaseConnector.getConnection());
-        hbase.countRowsInTable("cooccurrences"+HBaseProploader.getProperties().getProperty("tablePostfix"));
-        return 0;
+        long rows = hbase.countRowsInTable("cooccurrences"+HBaseProploader.getProperties().getProperty("tablePostfix"));
+        return rows;
     }
-    private int getMysqlCooccurrences() {
+    private long getMysqlCooccurrences() {
         SqlDataGetter sql = new SqlDataGetter(SqlConnector.getConnection());
         String query = "select (select count(*) from co_n)+(select count(*) from co_s)";
         ArrayList<HashMap<String, Object>> result = sql.getDataFromQuery(query);
+        long rows = 0L;
         for (HashMap<String, Object> stringObjectHashMap : result) {
             for (String s : stringObjectHashMap.keySet()) {
+                rows = (long) stringObjectHashMap.get(s);
                 System.out.println("Result: "+stringObjectHashMap.get(s));
             }
         }
-        return 0;
+        return rows;
     }
 }
