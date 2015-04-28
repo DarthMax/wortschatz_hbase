@@ -191,5 +191,5 @@ where `x y z...` are port offsets
 
 On nemo.tm.informatik.uni-leipzig.de:
 ```bash
-hadoop/bin/stop-hbase.sh
+hbase/bin/stop-hbase.sh
 ```
