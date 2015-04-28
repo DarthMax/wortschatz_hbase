@@ -178,12 +178,12 @@ vim conf/regionservers
 
 On arielle.tm.informatik.uni-leipzig.de:
 ```bash
-hadoop/bin/start-hbase.sh
+hbase/bin/start-hbase.sh
 ```
 
 To start additional regionservers run
 ```bash
-hadoop/bin/local-regionservers.sh start x y z ...
+hbase/bin/local-regionservers.sh start x y z ...
 ```
 where `x y z...` are port offsets
 
